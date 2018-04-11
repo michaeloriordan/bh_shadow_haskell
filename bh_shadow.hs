@@ -1,4 +1,4 @@
-data Vec4 = Vec4 Double Double Double Double deriving (Show)
+data Vec4 = Vec4 !Double !Double !Double !Double deriving (Show)
 
 data Photon = Photon Vec4 Vec4 deriving (Show)
 
