@@ -1,12 +1,10 @@
-data Vec4 = Vec4 !Double !Double !Double !Double deriving (Show)
+data Photon = Photon [Double] [Double] deriving (Show)
 
-data Photon = Photon Vec4 Vec4 deriving (Show)
+x1 = [1.0, 2.0, 3.0, 4.0]
+k1 = [1.0, 2.0, 3.0, 4.0]
 
-x1 = Vec4 1 2 3 4
-k1 = Vec4 1 2 3 4
-
-x2 = Vec4 5 6 7 8
-k2 = Vec4 5 6 7 8
+x2 = [5.0, 6.0, 7.0, 8.0]
+k2 = [5.0, 6.0, 7.0, 8.0]
 
 xs = [x1, x2]
 ks = [k1, k2]
