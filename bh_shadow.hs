@@ -38,8 +38,8 @@ camera_i = pi/2
 
 kk0 = 10.0
 
-init_photon :: Double -> Double -> Double -> Double -> Photon
-init_photon cr ci x y = Photon xi ki where
+init_photon :: Double -> Double -> Double -> Double -> Double -> Photon
+init_photon cr ci x y k0 = Photon xi ki where
     sini = sin ci
     cosi = cos ci
 
@@ -48,7 +48,6 @@ init_photon cr ci x y = Photon xi ki where
     phi = atan2 x $ cr*sini - y*cosi
     xi = [0.0, r, th, phi]
 
-    k0 = kk0
     k1 = k0 * (-cr / r)
     k2 = k0 * (cosi - (y*sini + cr*cosi) * (cr / r^2)) / 
          (sqrt (x^2 + (cr*sini - y*cosi)^2))
@@ -56,4 +55,4 @@ init_photon cr ci x y = Photon xi ki where
 
     ki = [k0, k1, k2, k3]
 
-photons = [init_photon camera_r camera_i x y | (x, y) <- cpoints]
+photons = [init_photon camera_r camera_i x y kk0 | (x, y) <- cpoints]
