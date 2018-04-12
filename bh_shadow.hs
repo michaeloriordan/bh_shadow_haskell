@@ -303,6 +303,7 @@ data_to_string d = unlines [unwords (map show di) | di <- d]
 main = do
     print "Propagating photons"
     let phs = propagate_photons photons
+    print "Saving data"
     let dsave = data_to_save phs cpixels 
     writeFile "data.txt" (data_to_string dsave)
     print "Done"
