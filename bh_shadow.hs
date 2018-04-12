@@ -236,6 +236,11 @@ photon_finished ph = finished where
     (_:r:_) = photon_x ph
     finished = r <= rh || r > max_r
 
+photon_escaped :: Photon -> Bool
+photon_escaped ph = escaped where
+    (_:r:_) = photon_x ph
+    escaped = r > max_r
+
 propagate_photon :: Photon -> Photon
 propagate_photon ph 
     | photon_finished ph = ph
