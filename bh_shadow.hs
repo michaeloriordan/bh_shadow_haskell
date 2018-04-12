@@ -262,3 +262,13 @@ propagate_photon :: Photon -> Photon
 propagate_photon ph 
     | photon_finished ph = ph
     | otherwise = propagate_photon $ step_photon ph
+
+propagate_photons :: [Photon] -> [Photon]
+propagate_photons phs = [propagate_photon ph | ph <- phs]
+
+--------------------------------------------------------------------------------
+
+main = do
+    print "Propagating photons"
+    let phs = propagate_photons photons
+    print "Done"
