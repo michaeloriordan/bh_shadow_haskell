@@ -216,7 +216,19 @@ step_geodesic ph = phf where
     x = photon_x ph
     k = photon_k ph
     dl = stepsize x k
-    phf = step_geodesic_rk4 ph dl
+    phi = step_geodesic_rk4 ph dl
+    phf = enforce_spherical phi
+
+enforce_spherical :: Photon -> Photon
+enforce_spherical ph = enforce_spherical' (photon_x ph) (photon_k ph)
+
+-- Assumes x2 and x3 usual theta and phi
+-- Enforce theta stay in domain [0, pi] - Chan et al. (2013)
+enforce_spherical' :: [Double] -> [Double] -> Photon
+enforce_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
+    | x2 > pi = Photon [x0, x1, 2*pi-x2, x3+pi] [k0, k1, -k2, k3]
+    | x2 < 0  = Photon [x0, x1, -x2, x3-pi] [k0, k1, -k2, k3]
+    | otherwise = Photon [x0, x1, x2, x3] [k0, k1, k2, k3]
 
 photon_finished :: Photon -> Bool
 photon_finished ph = finished where
