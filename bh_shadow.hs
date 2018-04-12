@@ -163,7 +163,7 @@ conn :: [Double] -> [[[Double]]]
 conn x = g where
     g = conn_schwarzschild_GP x
 
--- Assumes coordinate basis => take advantage of symmetry in the connection
+-- Assumes coordinate basis => use symmetry in the connection
 dkdl :: [Double] -> [Double] -> [Double] 
 dkdl x (k0:k1:k2:k3:_) = dk where
     c = conn x
