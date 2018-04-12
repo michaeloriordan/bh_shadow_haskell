@@ -279,10 +279,14 @@ fst' (x, _, _) = x
 snd' (_, x, _) = x
 trd' (_, _, x) = x
 
+-- Save: "x y r th phi escaped" 
+-- Initial pixel: (x, y)
+-- Final position: (r, th, phi)
+-- Escaped: 1 or 0
 data_to_save :: [Photon] -> [(Double, Double)] -> [[Double]]
 data_to_save phs pixels = data2save where
     positions = [(photon_r ph, photon_th ph, photon_phi ph) | ph <- phs]
-    escaped = [if photon_escaped ph then 1.0 else 0.0 | ph <- phs]
+    escaped = [if photon_escaped ph then 1 else 0 | ph <- phs]
     data2save = [[x, y, r, th, phi, esc] 
                  | (pix, pos, esc) <- zip3 pixels positions escaped,
                  let x = fst pix,
