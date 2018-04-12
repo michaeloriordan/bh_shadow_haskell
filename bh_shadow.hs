@@ -143,19 +143,17 @@ step_geodesic_rk4 ph dl = Photon xp kp where
     x = photon_x ph
     k = photon_k ph
 
-    dll = (dl / 2)
-
     f1x = k
     f1k = dkdl x k
 
-    kt1 = [ki + dll * fi | (ki, fi) <- zip k f1k]
-    xt1 = [xi + dll * fi | (xi, fi) <- zip x f1x]
+    kt1 = [ki + (dl/2) * fi | (ki, fi) <- zip k f1k]
+    xt1 = [xi + (dl/2) * fi | (xi, fi) <- zip x f1x]
 
     f2x = kt1
     f2k = dkdl xt1 kt1
 
-    kt2 = [ki + dll * fi | (ki, fi) <- zip k f2k]
-    xt2 = [xi + dll * fi | (xi, fi) <- zip x f2x]
+    kt2 = [ki + (dl/2) * fi | (ki, fi) <- zip k f2k]
+    xt2 = [xi + (dl/2) * fi | (xi, fi) <- zip x f2x]
 
     f3x = kt2
     f3k = dkdl xt2 kt2
@@ -166,10 +164,8 @@ step_geodesic_rk4 ph dl = Photon xp kp where
     f4x = kt3
     f4k = dkdl xt3 kt3
 
-    frac = 0.166666666666667
-
-    dx = [frac*dl * (f1 + 2*(f2 + f3) + f4) | (f1,f2,f3,f4) <- zip4 f1x f2x f3x f4x]
-    dk = [frac*dl * (f1 + 2*(f2 + f3) + f4) | (f1,f2,f3,f4) <- zip4 f1k f2k f3k f4k]
+    dx = [(dl/6) * (f1 + 2*(f2 + f3) + f4) | (f1,f2,f3,f4) <- zip4 f1x f2x f3x f4x]
+    dk = [(dl/6) * (f1 + 2*(f2 + f3) + f4) | (f1,f2,f3,f4) <- zip4 f1k f2k f3k f4k]
 
     xp = [xi + dxi | (xi, dxi) <- zip x dx]
     kp = [ki + dki | (ki, dki) <- zip k dk]
