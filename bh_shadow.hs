@@ -24,6 +24,8 @@ max_r = camera_r + 10
 
 step_epsilon = 0.01
 
+integrator = RK4
+
 --------------------------------------------------------------------------------
 
 data Photon = Photon {photon_x, photon_k :: [Double]} deriving (Show)
@@ -42,7 +44,9 @@ photon_phi ph = phi where
 
 --------------------------------------------------------------------------------
 
-data Coords = Schwarzschild_GP | Nothing  deriving (Eq)
+data Coords = Schwarzschild_GP deriving (Eq)
+
+data Integrator = RK4 deriving (Eq)
 
 --------------------------------------------------------------------------------
 
@@ -160,17 +164,17 @@ conn_schwarzschild_GP (_:r:th:_) = c where
 gcov :: [Double] -> [[Double]]
 gcov x
     | coords == Schwarzschild_GP = gcov_schwarzschild_GP x
-    | otherwise = error "Unknown coords"
+    | otherwise = error "Unknown coords!"
 
 gcon :: [Double] -> [[Double]]
 gcon x 
     | coords == Schwarzschild_GP = gcon_schwarzschild_GP x
-    | otherwise = error "Unknown coords"
+    | otherwise = error "Unknown coords!"
 
 conn :: [Double] -> [[[Double]]]
 conn x
     | coords == Schwarzschild_GP = conn_schwarzschild_GP x
-    | otherwise = error "Unknown coords"
+    | otherwise = error "Unknown coords!"
 
 -- Assumes coordinate basis => use symmetry in the connection
 dkdl :: [Double] -> [Double] -> [Double] 
@@ -242,7 +246,9 @@ step_geodesic_rk4 ph dl = phf where
     phf = Photon xp kp
 
 step_geodesic :: Photon -> Double -> Photon
-step_geodesic ph dl = step_geodesic_rk4 ph dl
+step_geodesic ph dl 
+    | integrator == RK4 = step_geodesic_rk4 ph dl
+    | otherwise = error "Unknown integrator!"
 
 step_photon :: Photon -> Photon
 step_photon ph = phf where
@@ -253,7 +259,7 @@ step_photon ph = phf where
 bound_spherical :: Photon -> Photon
 bound_spherical ph 
     | coords == Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
-    | otherwise = error "Unknown coords"
+    | otherwise = error "Unknown coords!"
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
