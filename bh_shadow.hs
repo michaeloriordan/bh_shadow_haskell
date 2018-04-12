@@ -63,8 +63,8 @@ cxmax = snd cxlims
 cymin = fst cylims
 cymax = snd cylims
 
-dx = (cxmax - cxmin) / nx
-dy = (cymax - cymin) / ny
+dx = (cxmax - cxmin) / (nx-1)
+dy = (cymax - cymin) / (ny-1)
 
 cxs = [cxmin, cxmin+dx .. cxmax]
 cys = [cymin, cymin+dy .. cymax]
@@ -72,8 +72,10 @@ cys = [cymin, cymin+dy .. cymax]
 cpixels = [(x, y) | x <- cxs, y <- cys]
 
 -- Assuming camera far from BH => flat space - Johannsen & Psaltis (2010)
-init_photon :: Double -> Double -> Double -> Double -> Double -> Photon
-init_photon cr ci x y k0 = Photon xi ki where
+init_photon :: Double -> Double -> Double -> (Double, Double) -> Photon
+init_photon k0 cr ci pixel = Photon xi ki where
+    x = fst pixel
+    y = snd pixel
     sini = sin ci
     cosi = cos ci
 
@@ -89,7 +91,7 @@ init_photon cr ci x y k0 = Photon xi ki where
     xi = [0.0, r, th, phi]
     ki = [k0, k1, k2, k3]
 
-photons = [init_photon camera_r camera_i x y k0_init | (x, y) <- cpixels]
+photons = map (init_photon k0_init camera_r camera_i) cpixels
 
 --------------------------------------------------------------------------------
 
@@ -299,7 +301,7 @@ propagate_photon ph
     | otherwise = propagate_photon $ step_photon ph
 
 propagate_photons :: [Photon] -> [Photon]
-propagate_photons phs = [propagate_photon ph | ph <- phs]
+propagate_photons phs = map propagate_photon phs
 
 --------------------------------------------------------------------------------
 
