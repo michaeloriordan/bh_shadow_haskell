@@ -196,3 +196,16 @@ step_geodesic_rk4 ph dl = Photon xp kp where
 
     xp = [xi + dxi | (xi, dxi) <- zip x dx]
     kp = [ki + dki | (ki, dki) <- zip k dk]
+
+stepsize :: [Double] -> [Double] -> Double
+stepsize (_:x1:_) (_:k1:k2:k3:_) = dl where
+    eps = 0.01
+
+    d1 = abs k1 / x1
+    d2 = abs k2
+    d3 = abs k3
+
+    dl = eps / (d1 + d2 + d3)
+
+--propagate_photon :: Photon -> Photon
+--propagate_photon ph = Photon xp kp where
