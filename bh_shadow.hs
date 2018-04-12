@@ -218,15 +218,15 @@ step_photon :: Photon -> Photon
 step_photon ph = phf where
     dl = stepsize (photon_x ph) (photon_k ph)
     phh = step_geodesic ph dl
-    phf = enforce_spherical phh
+    phf = bound_spherical phh
 
-enforce_spherical :: Photon -> Photon
-enforce_spherical ph = enforce_spherical' (photon_x ph) (photon_k ph)
+bound_spherical :: Photon -> Photon
+bound_spherical ph = bound_spherical' (photon_x ph) (photon_k ph)
 
 -- Assumes x2 and x3 usual theta and phi
--- Enforce theta stay in domain [0, pi] - Chan et al. (2013)
-enforce_spherical' :: [Double] -> [Double] -> Photon
-enforce_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
+-- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
+bound_spherical' :: [Double] -> [Double] -> Photon
+bound_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
     | x2 > pi = Photon [x0, x1, 2*pi-x2, x3+pi] [k0, k1, -k2, k3]
     | x2 < 0  = Photon [x0, x1, -x2, x3-pi] [k0, k1, -k2, k3]
     | otherwise = Photon [x0, x1, x2, x3] [k0, k1, k2, k3]
