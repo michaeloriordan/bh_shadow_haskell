@@ -8,27 +8,34 @@ data Integrator = RK4 deriving (Eq)
 
 --------------------------------------------------------------------------------
 
+-- Camera distance and inclination
 camera_r = 100
 camera_i = pi/2
 
-cxmax = 5
-cxmin = -5
-cymax = 5
-cymin = -5
+-- Camera size
+cxlims = (-5, 5)
+cylims = (-5, 5)
 
+-- Number of pixels (photons)
 nx = 10
 ny = 10
 
+-- Initial k^0 component of photon momentum
 k0_init = 10.0
 
+-- Coordinate system
 coords = Schwarzschild_GP
 
+-- Black hole spin
 spin = 0.0
 
+-- Radius beyond which photons have "escaped"
 max_r = camera_r + 10
 
+-- Stepsize parameter
 step_epsilon = 0.01
 
+-- Integration method
 integrator = RK4
 
 --------------------------------------------------------------------------------
@@ -50,6 +57,11 @@ photon_phi ph = phi where
 --------------------------------------------------------------------------------
 
 rh = 1 + sqrt (1 - spin^2)
+
+cxmin = fst cxlims
+cxmax = snd cxlims
+cymin = fst cylims
+cymax = snd cylims
 
 dx = (cxmax - cxmin) / nx
 dy = (cymax - cymin) / ny
