@@ -38,7 +38,7 @@ integrator = RK4
 -- Stepsize parameter
 step_epsilon = 0.01
 
--- Max number of steps
+-- Max number of steps before photon "stuck"
 max_n = 100000
 
 --------------------------------------------------------------------------------
