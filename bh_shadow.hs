@@ -22,8 +22,8 @@ cxmin = -5
 cymax = 5
 cymin = -5
 
-nx = 10
-ny = 10
+nx = 2
+ny = 2
 
 dx = (cxmax - cxmin) / nx
 dy = (cymax - cymin) / ny
@@ -36,7 +36,7 @@ cpoints = [(x, y) | x <- cxs, y <- cys]
 camera_r = 100
 camera_i = pi/2
 
-kk0 = 10
+kk0 = 10.0
 
 init_photon :: Double -> Double -> Double -> Double -> Photon
 init_photon cr ci x y = Photon xi ki where
@@ -48,17 +48,11 @@ init_photon cr ci x y = Photon xi ki where
     phi = atan2 x $ cr*sini - y*cosi
     xi = [0.0, r, th, phi]
 
-    k1 = - (cr / r) * kk0
-    k2 = kk0 * (cosi - (y*sini + cr*cosi) * (cr / r^2)) / 
+    k0 = kk0
+    k1 = k0 * (-cr / r)
+    k2 = k0 * (cosi - (y*sini + cr*cosi) * (cr / r^2)) / 
          (sqrt (x^2 + (cr*sini - y*cosi)^2))
-    k3 = ((x*sini) / (x^2 + (cr*sini - y*cosi)^2)) * kk0
-
-    eta0 = -1
-    eta1 = 1
-    eta2 = r^2
-    eta3 = r^2 * (sin th)^2
-
-    k0 = sqrt (-(k1*k1*eta1 + k2*k2*eta2 + k3*k3*eta3) / eta0)
+    k3 = k0 * (x*sini) / (x^2 + (cr*sini - y*cosi)^2)
 
     ki = [k0, k1, k2, k3]
 
