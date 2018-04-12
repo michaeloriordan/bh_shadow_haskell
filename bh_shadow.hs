@@ -251,7 +251,9 @@ step_photon ph = phf where
     phf = bound_spherical phh
 
 bound_spherical :: Photon -> Photon
-bound_spherical ph = bound_spherical' (photon_x ph) (photon_k ph)
+bound_spherical ph 
+    | coords == Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
+    | otherwise = error "Unknown coords"
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
