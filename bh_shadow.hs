@@ -1,5 +1,6 @@
 import Data.List 
 import System.IO
+--import Control.Parallel.Strategies
 
 --------------------------------------------------------------------------------
 
@@ -305,6 +306,7 @@ propagate_photon n ph
 
 propagate_photons :: [Photon] -> [Photon]
 propagate_photons phs = map (propagate_photon 0) phs
+--propagate_photons phs = parMap rpar (propagate_photon 0) phs
 
 --------------------------------------------------------------------------------
 
