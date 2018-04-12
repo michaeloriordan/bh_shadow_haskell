@@ -15,6 +15,8 @@ ny = 10
 
 kk0 = 10.0
 
+spin = 0.0
+
 dx = (cxmax - cxmin) / nx
 dy = (cymax - cymin) / ny
 
@@ -43,8 +45,8 @@ init_photon cr ci x y k0 = Photon xi ki where
 
 photons = [init_photon camera_r camera_i x y kk0 | (x, y) <- cpoints]
 
-gcov_schwarzschild_GP :: Double -> Double -> [[Double]]
-gcov_schwarzschild_GP r th = g where
+gcov_schwarzschild_GP :: [Double] -> [[Double]]
+gcov_schwarzschild_GP (_:r:th:_) = g where
     r2 = r^2
     b = 1 - (2 / r)
     sth2 = (sin th)^2
@@ -58,8 +60,8 @@ gcov_schwarzschild_GP r th = g where
 
     g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
 
-gcon_schwarzschild_GP :: Double -> Double -> [[Double]]
-gcon_schwarzschild_GP r th = g where
+gcon_schwarzschild_GP :: [Double] -> [[Double]]
+gcon_schwarzschild_GP (_:r:th:_) = g where
     r2 = r^2
     b = 1 - (2 / r)
     sth2 = (sin th)^2
@@ -73,8 +75,8 @@ gcon_schwarzschild_GP r th = g where
 
     g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
 
-conn_schwarzschild_GP :: Double -> Double -> [[[Double]]]
-conn_schwarzschild_GP r th = c where
+conn_schwarzschild_GP :: [Double] -> [[[Double]]]
+conn_schwarzschild_GP (_:r:th:_) = c where
     b = sqrt (2 / r)
     br = b * r
     sth = sin th
@@ -122,21 +124,46 @@ conn_schwarzschild_GP r th = c where
          [[0, 0, 0, 0], [0, 0, c212, 0], [0, c221, 0, 0], [0, 0, 0, c233]],
          [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
 
-gcov :: [Double] -> Double -> [[Double]]
-gcov (x0:x1:x2:x3) a = g where
-    g = gcov_schwarzschild_GP x1 x2
+gcov :: [Double] -> [[Double]]
+gcov x = g where
+    g = gcov_schwarzschild_GP x
 
-gcon :: [Double] -> Double -> [[Double]]
-gcon (x0:x1:x2:x3) a = g where
-    g = gcon_schwarzschild_GP x1 x2
+gcon :: [Double] -> [[Double]]
+gcon x = g where
+    g = gcon_schwarzschild_GP x
 
-conn :: [Double] -> Double -> [[[Double]]]
-conn (x0:x1:x2:x3) a = g where
-    g = conn_schwarzschild_GP x1 x2
+conn :: [Double] -> [[[Double]]]
+conn x = g where
+    g = conn_schwarzschild_GP x
 
+-- Assumes coordinate basis => take advantage of symmetry in the connection
 dkdl :: [Double] -> [Double] -> [Double] 
-dkdl x k = dk where
-    dk = [1, 1, 1, 1]
+dkdl x (k0:k1:k2:k3:_) = dk where
+    c = conn x
+
+    c00 = [c !!i !!0 !!0 | i <- [0..3]]
+    c11 = [c !!i !!1 !!1 | i <- [0..3]]
+    c22 = [c !!i !!2 !!2 | i <- [0..3]]
+    c33 = [c !!i !!3 !!3 | i <- [0..3]]
+    c01 = [c !!i !!0 !!1 | i <- [0..3]]
+    c02 = [c !!i !!0 !!2 | i <- [0..3]]
+    c03 = [c !!i !!0 !!3 | i <- [0..3]]
+    c12 = [c !!i !!1 !!2 | i <- [0..3]]
+    c13 = [c !!i !!1 !!3 | i <- [0..3]]
+    c23 = [c !!i !!2 !!3 | i <- [0..3]]
+
+    dk1 = [-2 * (k0 * (c01i * k1 + 
+                       c02i * k2 + 
+                       c03i * k3) + 
+                 k1 * (c12i * k2 + 
+                       c13i * k3) + 
+                 k2 * (c23i * k3))
+           | (c01i,c02i,c03i,c12i,c13i,c23i) <- zip6 c01 c02 c03 c12 c13 c23]
+
+    dk2 = [c00i * k0^2 + c11i * k1^2 + c22i * k2^2 + c33i * k3^2
+           | (c00i,c11i,c22i,c33i) <- zip4 c00 c11 c22 c33]
+
+    dk = [dk1i - dk2i | (dk1i,dk2i) <- zip dk1 dk2]
 
 step_geodesic_rk4 :: Photon -> Double -> Photon
 step_geodesic_rk4 ph dl = Photon xp kp where
