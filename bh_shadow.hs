@@ -1,4 +1,4 @@
-data Photon = Photon [Double] [Double] deriving (Show)
+data Photon = Photon {photon_x, photon_k :: [Double]} deriving (Show)
 
 camera_r = 100
 camera_i = pi/2
@@ -84,7 +84,7 @@ conn_schwarzschild_GP r th = c where
 
     ----------------------------------------
 
-    c000 = b / r2
+    c000 = ([0,0,0], b / r2)
     c010 = 1 / r2
     c001 = c010
     c011 = 1 / (br * r)
@@ -119,3 +119,55 @@ conn_schwarzschild_GP r th = c where
          [[c100, c101, 0, 0], [c110, c111, 0, 0], [0, 0, c122, 0], [0, 0, 0, c133]],
          [[0, 0, 0, 0], [0, 0, c212, 0], [0, c221, 0, 0], [0, 0, 0, c233]],
          [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
+
+gcov :: [Double] -> Double -> [[Double]]
+gcov x a = g where
+    g = gcov_schwarzschild_GP (x !! 1) (x !! 2)
+
+gcon :: [Double] -> Double -> [[Double]]
+gcon x a = g where
+    g = gcon_schwarzschild_GP (x !! 1) (x !! 2)
+
+conn :: [Double] -> Double -> [[[Double]]]
+conn x a = g where
+    g = conn_schwarzschild_GP (x !! 1) (x !! 2)
+
+dkdl :: [Double] -> [Double] -> [Double]
+dkdl x k = dk where
+    dk = [1, 1, 1, 1]
+
+step_geodesic_rk4 :: Photon -> Double -> Photon
+step_geodesic_rk4 ph dl = Photon xp kp where
+    x = photon_x ph
+    k = photon_k ph
+
+    dll = (dl / 2)
+
+    f1x = k
+    f1k = dkdl x k
+
+    kt1 = zipWith (+) k (map (dll *) f1k)
+    xt1 = zipWith (+) x (map (dll *) f1x)
+
+    f2x = kt1
+    f2k = dkdl xt1 kt1
+
+    kt2 = zipWith (+) k (map (dll *) f2k)
+    xt2 = zipWith (+) x (map (dll *) f2x)
+
+    f3x = kt2
+    f3k = dkdl xt2 kt2
+
+    kt3 = zipWith (+) k (map (dl *) f3k)
+    xt3 = zipWith (+) x (map (dl *) f3x)
+
+    f4x = kt3
+    f4k = dkdl xt3 kt3
+
+    frac = 0.166666666666667
+
+    dx = map (frac * dl *) (zipWith (+) (zipWith (+) f1x (map (2 *) (zipWith (+) f2x f3x))) f4x)
+    dk = map (frac * dl *) (zipWith (+) (zipWith (+) f1k (map (2 *) (zipWith (+) f2k f3k))) f4k)
+
+    xp = zipWith (+) x dx
+    kp = zipWith (+) k dk
