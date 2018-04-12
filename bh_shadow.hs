@@ -232,14 +232,17 @@ bound_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
     | otherwise = Photon [x0, x1, x2, x3] [k0, k1, k2, k3]
 
 photon_finished :: Photon -> Bool
-photon_finished ph = finished where
-    (_:r:_) = photon_x ph
-    finished = r <= rh || r > max_r
+photon_finished ph = (photon_escaped ph) || (photon_captured ph)
 
 photon_escaped :: Photon -> Bool
 photon_escaped ph = escaped where
     (_:r:_) = photon_x ph
     escaped = r > max_r
+
+photon_captured :: Photon -> Bool
+photon_captured ph = captured where
+    (_:r:_) = photon_x ph
+    captured = r <= rh
 
 propagate_photon :: Photon -> Photon
 propagate_photon ph 
