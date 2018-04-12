@@ -33,7 +33,7 @@ dy = (cymax - cymin) / ny
 cxs = [cxmin, cxmin+dx .. cxmax]
 cys = [cymin, cymin+dy .. cymax]
 
-cpoints = [(x, y) | x <- cxs, y <- cys]
+cpixels = [(x, y) | x <- cxs, y <- cys]
 
 -- Assuming camera far from BH => flat space - Johannsen & Psaltis (2010)
 init_photon :: Double -> Double -> Double -> Double -> Double -> Photon
@@ -53,7 +53,7 @@ init_photon cr ci x y k0 = Photon xi ki where
     xi = [0.0, r, th, phi]
     ki = [k0, k1, k2, k3]
 
-photons = [init_photon camera_r camera_i x y k0_init | (x, y) <- cpoints]
+photons = [init_photon camera_r camera_i x y k0_init | (x, y) <- cpixels]
 
 --------------------------------------------------------------------------------
 
@@ -271,4 +271,5 @@ propagate_photons phs = [propagate_photon ph | ph <- phs]
 main = do
     print "Propagating photons"
     let phs = propagate_photons photons
+    print phs
     print "Done"
