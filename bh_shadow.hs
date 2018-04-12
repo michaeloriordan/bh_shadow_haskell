@@ -32,11 +32,14 @@ spin = 0.0
 -- Radius beyond which photons have "escaped"
 max_r = camera_r + 10
 
+-- Integration method
+integrator = RK4
+
 -- Stepsize parameter
 step_epsilon = 0.01
 
--- Integration method
-integrator = RK4
+-- Max number of steps
+max_n = 100000
 
 --------------------------------------------------------------------------------
 
@@ -284,8 +287,8 @@ bound_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
 
 --------------------------------------------------------------------------------
 
-photon_finished :: Photon -> Bool
-photon_finished ph = (photon_escaped ph) || (photon_captured ph)
+photon_finished :: Int -> Photon -> Bool
+photon_finished n ph = (photon_escaped ph) || (photon_captured ph) || (photon_stuck n)
 
 photon_escaped :: Photon -> Bool
 photon_escaped ph = (photon_r ph) > max_r
@@ -293,15 +296,18 @@ photon_escaped ph = (photon_r ph) > max_r
 photon_captured :: Photon -> Bool
 photon_captured ph = (photon_r ph) <= rh
 
+photon_stuck :: Int -> Bool
+photon_stuck n = n > max_n
+
 --------------------------------------------------------------------------------
 
-propagate_photon :: Photon -> Photon
-propagate_photon ph 
-    | photon_finished ph = ph
-    | otherwise = propagate_photon $ step_photon ph
+propagate_photon :: Int -> Photon -> Photon
+propagate_photon n ph 
+    | photon_finished n ph = ph
+    | otherwise = propagate_photon (n+1) $ step_photon ph
 
 propagate_photons :: [Photon] -> [Photon]
-propagate_photons phs = map propagate_photon phs
+propagate_photons phs = map (propagate_photon 0) phs
 
 --------------------------------------------------------------------------------
 
@@ -312,11 +318,13 @@ trd' (_, _, x) = x
 -- Save: "x y r th phi escaped" 
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
--- Escaped: 1 or 0
+-- Escaped: 1 or 0 (-1 for stuck)
 data_to_save :: [Photon] -> [(Double, Double)] -> [[Double]]
 data_to_save phs pixels = data2save where
     positions = [(photon_r ph, photon_th ph, photon_phi ph) | ph <- phs]
-    escaped = [if photon_escaped ph then 1 else 0 | ph <- phs]
+    escaped = [if photon_escaped ph then 1 
+               else if photon_captured ph then 0
+               else -1 | ph <- phs]
     data2save = [[x, y, r, th, phi, esc] 
                  | (pix, pos, esc) <- zip3 pixels positions escaped,
                  let x = fst pix,
