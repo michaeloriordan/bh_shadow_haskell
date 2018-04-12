@@ -211,13 +211,14 @@ step_geodesic_rk4 ph dl = phf where
 
     phf = Photon xp kp
 
-step_geodesic :: Photon -> Photon
-step_geodesic ph = phf where
-    x = photon_x ph
-    k = photon_k ph
-    dl = stepsize x k
-    phi = step_geodesic_rk4 ph dl
-    phf = enforce_spherical phi
+step_geodesic :: Photon -> Double -> Photon
+step_geodesic ph dl = step_geodesic_rk4 ph dl
+
+step_photon :: Photon -> Photon
+step_photon ph = phf where
+    dl = stepsize (photon_x ph) (photon_k ph)
+    phh = step_geodesic ph dl
+    phf = enforce_spherical phh
 
 enforce_spherical :: Photon -> Photon
 enforce_spherical ph = enforce_spherical' (photon_x ph) (photon_k ph)
@@ -238,4 +239,4 @@ photon_finished ph = finished where
 propagate_photon :: Photon -> Photon
 propagate_photon ph 
     | photon_finished ph = ph
-    | otherwise = propagate_photon $ step_geodesic ph
+    | otherwise = propagate_photon $ step_photon ph
