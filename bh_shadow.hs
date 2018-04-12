@@ -1,7 +1,5 @@
 import Data.List 
 
-data Photon = Photon {photon_x, photon_k :: [Double]} deriving (Show)
-
 --------------------------------------------------------------------------------
 
 camera_r = 100
@@ -22,6 +20,22 @@ spin = 0.0
 max_r = camera_r + 10
 
 step_epsilon = 0.01
+
+--------------------------------------------------------------------------------
+
+data Photon = Photon {photon_x, photon_k :: [Double]} deriving (Show)
+
+photon_r :: Photon -> Double
+photon_r ph = r where
+    (_:r:_) = photon_x ph
+
+photon_th :: Photon -> Double
+photon_th ph = th where
+    (_:_:th:_) = photon_x ph
+
+photon_phi :: Photon -> Double
+photon_phi ph = phi where
+    (_:_:_:phi:_) = photon_x ph
 
 --------------------------------------------------------------------------------
 
@@ -247,14 +261,10 @@ photon_finished :: Photon -> Bool
 photon_finished ph = (photon_escaped ph) || (photon_captured ph)
 
 photon_escaped :: Photon -> Bool
-photon_escaped ph = escaped where
-    (_:r:_) = photon_x ph
-    escaped = r > max_r
+photon_escaped ph = (photon_r ph) > max_r
 
 photon_captured :: Photon -> Bool
-photon_captured ph = captured where
-    (_:r:_) = photon_x ph
-    captured = r <= rh
+photon_captured ph = (photon_r ph) <= rh
 
 --------------------------------------------------------------------------------
 
@@ -268,8 +278,27 @@ propagate_photons phs = [propagate_photon ph | ph <- phs]
 
 --------------------------------------------------------------------------------
 
+fst' (x, _, _) = x
+snd' (_, x, _) = x
+third (_, _, x) = x
+
+data_to_save :: [Photon] -> [(Double, Double)] -> [[Double]]
+data_to_save phs pixels = data2save where
+    positions = [(photon_r ph, photon_th ph, photon_phi ph) | ph <- phs]
+    escaped = [if photon_escaped ph then 1.0 else 0.0 | ph <- phs]
+    data2save = [[x, y, r, th, phi, esc] 
+                 | (pix, pos, esc) <- zip3 pixels positions escaped,
+                 let x = fst pix,
+                 let y = snd pix,
+                 let r = fst' pos,
+                 let th = snd' pos,
+                 let phi = third pos]
+
+--------------------------------------------------------------------------------
+
 main = do
     print "Propagating photons"
     let phs = propagate_photons photons
-    print phs
+    let dsave = data_to_save phs cpixels 
+    --print dsave
     print "Done"
