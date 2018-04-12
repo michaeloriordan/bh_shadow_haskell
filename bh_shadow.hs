@@ -84,7 +84,7 @@ conn_schwarzschild_GP r th = c where
 
     ----------------------------------------
 
-    c000 = ([0,0,0], b / r2)
+    c000 = b / r2
     c010 = 1 / r2
     c001 = c010
     c011 = 1 / (br * r)
@@ -121,16 +121,16 @@ conn_schwarzschild_GP r th = c where
          [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
 
 gcov :: [Double] -> Double -> [[Double]]
-gcov x a = g where
-    g = gcov_schwarzschild_GP (x !! 1) (x !! 2)
+gcov (x0:x1:x2:x3) a = g where
+    g = gcov_schwarzschild_GP x1 x2
 
 gcon :: [Double] -> Double -> [[Double]]
-gcon x a = g where
-    g = gcon_schwarzschild_GP (x !! 1) (x !! 2)
+gcon (x0:x1:x2:x3) a = g where
+    g = gcon_schwarzschild_GP x1 x2
 
 conn :: [Double] -> Double -> [[[Double]]]
-conn x a = g where
-    g = conn_schwarzschild_GP (x !! 1) (x !! 2)
+conn (x0:x1:x2:x3) a = g where
+    g = conn_schwarzschild_GP x1 x2
 
 dkdl :: [Double] -> [Double] -> [Double]
 dkdl x k = dk where
