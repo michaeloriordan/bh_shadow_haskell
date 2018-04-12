@@ -16,6 +16,8 @@ ny = 10
 kk0 = 10.0
 
 spin = 0.0
+rh = 1 + sqrt (1 - spin^2)
+max_r = camera_r + 10
 
 dx = (cxmax - cxmin) / nx
 dy = (cymax - cymin) / ny
@@ -165,8 +167,18 @@ dkdl x (k0:k1:k2:k3:_) = dk where
 
     dk = [dk1i - dk2i | (dk1i,dk2i) <- zip dk1 dk2]
 
+stepsize :: [Double] -> [Double] -> Double
+stepsize (_:x1:_) (_:k1:k2:k3:_) = dl where
+    eps = 0.01
+
+    d1 = abs k1 / x1
+    d2 = abs k2
+    d3 = abs k3
+
+    dl = eps / (d1 + d2 + d3)
+
 step_geodesic_rk4 :: Photon -> Double -> Photon
-step_geodesic_rk4 ph dl = Photon xp kp where
+step_geodesic_rk4 ph dl = phf where
     x = photon_x ph
     k = photon_k ph
 
@@ -197,15 +209,21 @@ step_geodesic_rk4 ph dl = Photon xp kp where
     xp = [xi + dxi | (xi, dxi) <- zip x dx]
     kp = [ki + dki | (ki, dki) <- zip k dk]
 
-stepsize :: [Double] -> [Double] -> Double
-stepsize (_:x1:_) (_:k1:k2:k3:_) = dl where
-    eps = 0.01
+    phf = Photon xp kp
 
-    d1 = abs k1 / x1
-    d2 = abs k2
-    d3 = abs k3
+step_geodesic :: Photon -> Photon
+step_geodesic ph = phf where
+    x = photon_x ph
+    k = photon_k ph
+    dl = stepsize x k
+    phf = step_geodesic_rk4 ph dl
 
-    dl = eps / (d1 + d2 + d3)
+photon_finished :: Photon -> Bool
+photon_finished ph = finished where
+    (_:r:_) = photon_x ph
+    finished = r <= rh || r > max_r
 
---propagate_photon :: Photon -> Photon
---propagate_photon ph = Photon xp kp where
+propagate_photon :: Photon -> Photon
+propagate_photon ph 
+    | photon_finished ph = ph
+    | otherwise = propagate_photon $ step_geodesic ph
