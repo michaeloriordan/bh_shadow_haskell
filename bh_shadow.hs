@@ -287,8 +287,8 @@ bound_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
 
 --------------------------------------------------------------------------------
 
-photon_finished :: Int -> Photon -> Bool
-photon_finished n ph = (photon_escaped ph) || (photon_captured ph) || (photon_stuck n)
+photon_finished :: Photon -> Bool
+photon_finished ph = (photon_escaped ph) || (photon_captured ph)
 
 photon_escaped :: Photon -> Bool
 photon_escaped ph = (photon_r ph) > max_r
@@ -296,14 +296,11 @@ photon_escaped ph = (photon_r ph) > max_r
 photon_captured :: Photon -> Bool
 photon_captured ph = (photon_r ph) <= rh
 
-photon_stuck :: Int -> Bool
-photon_stuck n = n > max_n
-
 --------------------------------------------------------------------------------
 
 propagate_photon :: Int -> Photon -> Photon
 propagate_photon n ph 
-    | photon_finished n ph = ph
+    | photon_finished ph || n > max_n = ph
     | otherwise = propagate_photon (n+1) $ step_photon ph
 
 propagate_photons :: [Photon] -> [Photon]
