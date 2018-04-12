@@ -196,7 +196,6 @@ stepsize (_:x1:_) (_:k1:k2:k3:_) = dl where
     d1 = abs k1 / x1
     d2 = abs k2
     d3 = abs k3
-
     dl = step_epsilon / (d1 + d2 + d3)
 
 step_geodesic_rk4 :: Photon -> Double -> Photon
