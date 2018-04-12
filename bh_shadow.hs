@@ -16,6 +16,8 @@ ny = 10
 
 k0_init = 10.0
 
+coords = Schwarzschild_GP
+
 spin = 0.0
 
 max_r = camera_r + 10
@@ -37,6 +39,10 @@ photon_th ph = th where
 photon_phi :: Photon -> Double
 photon_phi ph = phi where
     (_:_:_:phi:_) = photon_x ph
+
+--------------------------------------------------------------------------------
+
+data Coords = Schwarzschild_GP | Nothing  deriving (Eq)
 
 --------------------------------------------------------------------------------
 
@@ -152,16 +158,19 @@ conn_schwarzschild_GP (_:r:th:_) = c where
          [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
 
 gcov :: [Double] -> [[Double]]
-gcov x = g where
-    g = gcov_schwarzschild_GP x
+gcov x
+    | coords == Schwarzschild_GP = gcov_schwarzschild_GP x
+    | otherwise = error "Unknown coords"
 
 gcon :: [Double] -> [[Double]]
-gcon x = g where
-    g = gcon_schwarzschild_GP x
+gcon x 
+    | coords == Schwarzschild_GP = gcon_schwarzschild_GP x
+    | otherwise = error "Unknown coords"
 
 conn :: [Double] -> [[[Double]]]
-conn x = g where
-    g = conn_schwarzschild_GP x
+conn x
+    | coords == Schwarzschild_GP = conn_schwarzschild_GP x
+    | otherwise = error "Unknown coords"
 
 -- Assumes coordinate basis => use symmetry in the connection
 dkdl :: [Double] -> [Double] -> [Double] 
