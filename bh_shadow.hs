@@ -2,6 +2,8 @@ import Data.List
 
 data Photon = Photon {photon_x, photon_k :: [Double]} deriving (Show)
 
+--------------------------------------------------------------------------------
+
 camera_r = 100
 camera_i = pi/2
 
@@ -13,11 +15,17 @@ cymin = -5
 nx = 10
 ny = 10
 
-kk0 = 10.0
+k0_init = 10.0
 
 spin = 0.0
-rh = 1 + sqrt (1 - spin^2)
+
 max_r = camera_r + 10
+
+step_epsilon = 0.01
+
+--------------------------------------------------------------------------------
+
+rh = 1 + sqrt (1 - spin^2)
 
 dx = (cxmax - cxmin) / nx
 dy = (cymax - cymin) / ny
@@ -45,7 +53,9 @@ init_photon cr ci x y k0 = Photon xi ki where
     xi = [0.0, r, th, phi]
     ki = [k0, k1, k2, k3]
 
-photons = [init_photon camera_r camera_i x y kk0 | (x, y) <- cpoints]
+photons = [init_photon camera_r camera_i x y k0_init | (x, y) <- cpoints]
+
+--------------------------------------------------------------------------------
 
 gcov_schwarzschild_GP :: [Double] -> [[Double]]
 gcov_schwarzschild_GP (_:r:th:_) = g where
@@ -167,15 +177,15 @@ dkdl x (k0:k1:k2:k3:_) = dk where
 
     dk = [dk1i - dk2i | (dk1i,dk2i) <- zip dk1 dk2]
 
+--------------------------------------------------------------------------------
+
 stepsize :: [Double] -> [Double] -> Double
 stepsize (_:x1:_) (_:k1:k2:k3:_) = dl where
-    eps = 0.01
-
     d1 = abs k1 / x1
     d2 = abs k2
     d3 = abs k3
 
-    dl = eps / (d1 + d2 + d3)
+    dl = step_epsilon / (d1 + d2 + d3)
 
 step_geodesic_rk4 :: Photon -> Double -> Photon
 step_geodesic_rk4 ph dl = phf where
@@ -231,6 +241,8 @@ bound_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
     | x2 < 0  = Photon [x0, x1, -x2, x3-pi] [k0, k1, -k2, k3]
     | otherwise = Photon [x0, x1, x2, x3] [k0, k1, k2, k3]
 
+--------------------------------------------------------------------------------
+
 photon_finished :: Photon -> Bool
 photon_finished ph = (photon_escaped ph) || (photon_captured ph)
 
@@ -243,6 +255,8 @@ photon_captured :: Photon -> Bool
 photon_captured ph = captured where
     (_:r:_) = photon_x ph
     captured = r <= rh
+
+--------------------------------------------------------------------------------
 
 propagate_photon :: Photon -> Photon
 propagate_photon ph 
