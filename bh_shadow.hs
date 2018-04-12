@@ -3,6 +3,11 @@ import System.IO
 
 --------------------------------------------------------------------------------
 
+data Coords = Schwarzschild_GP deriving (Eq)
+data Integrator = RK4 deriving (Eq)
+
+--------------------------------------------------------------------------------
+
 camera_r = 100
 camera_i = pi/2
 
@@ -41,12 +46,6 @@ photon_th ph = th where
 photon_phi :: Photon -> Double
 photon_phi ph = phi where
     (_:_:_:phi:_) = photon_x ph
-
---------------------------------------------------------------------------------
-
-data Coords = Schwarzschild_GP deriving (Eq)
-
-data Integrator = RK4 deriving (Eq)
 
 --------------------------------------------------------------------------------
 
