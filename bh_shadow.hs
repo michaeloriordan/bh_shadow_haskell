@@ -1,4 +1,5 @@
 import Data.List 
+import System.IO
 
 --------------------------------------------------------------------------------
 
@@ -294,8 +295,8 @@ data_to_save phs pixels = data2save where
                  let th = snd' pos,
                  let phi = third pos]
 
-data_to_strings :: [[Double]] -> [[Char]]
-data_to_strings d = [unwords (map show di) | di <- d]
+data_to_string :: [[Double]] -> [Char]
+data_to_string d = unlines [unwords (map show di) | di <- d]
 
 --------------------------------------------------------------------------------
 
@@ -303,6 +304,5 @@ main = do
     print "Propagating photons"
     let phs = propagate_photons photons
     let dsave = data_to_save phs cpixels 
-    let dstrings = data_to_strings dsave
-    print dstrings
+    writeFile "data.txt" (data_to_string dsave)
     print "Done"
