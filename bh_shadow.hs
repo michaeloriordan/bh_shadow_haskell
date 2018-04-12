@@ -41,6 +41,7 @@ init_photon cr ci x y k0 = Photon xi ki where
 
 photons = [init_photon camera_r camera_i x y kk0 | (x, y) <- cpoints]
 
+gcov_schwarzschild_GP :: Double -> Double -> [[Double]]
 gcov_schwarzschild_GP r th = g where
     r2 = r^2
     b = 1 - (2 / r)
@@ -55,6 +56,7 @@ gcov_schwarzschild_GP r th = g where
 
     g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
 
+gcon_schwarzschild_GP :: Double -> Double -> [[Double]]
 gcon_schwarzschild_GP r th = g where
     r2 = r^2
     b = 1 - (2 / r)
@@ -69,6 +71,7 @@ gcon_schwarzschild_GP r th = g where
 
     g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
 
+conn_schwarzschild_GP :: Double -> Double -> [[[Double]]]
 conn_schwarzschild_GP r th = c where
     b = sqrt (2 / r)
     br = b * r
@@ -81,35 +84,38 @@ conn_schwarzschild_GP r th = c where
 
     ----------------------------------------
 
-    c000 = ([0,0,0], b / r2)
-    c010 = ([0,1,0], 1 / r2)
-    c001 = ([0,0,1], snd c010)
-    c011 = ([0,1,1], 1 / (br * r))
-    c022 = ([0,2,2], -br)
-    c033 = ([0,3,3], -br * sth2)
+    c000 = b / r2
+    c010 = 1 / r2
+    c001 = c010
+    c011 = 1 / (br * r)
+    c022 = -br
+    c033 = -br * sth2
 
     ----------------------------------------
 
-    c100 = ([1,0,0], (r - 2) / r3)
-    c110 = ([1,1,0], - b / r2)
-    c101 = ([1,0,1], snd c110)
-    c111 = ([1,1,1], -1 / r2)
-    c122 = ([1,2,2], 2 - r)
-    c133 = ([1,3,3], -(r - 2) * sth2)
+    c100 = (r - 2) / r3
+    c110 = - b / r2
+    c101 = c110
+    c111 = -1 / r2
+    c122 = 2 - r
+    c133 = -(r - 2) * sth2
 
     ---------------------------------------- 
 
-    c221 = ([2,2,1], 1 / r)
-    c212 = ([2,1,2], snd c221)
-    c233 = ([2,3,3], -cth * sth)
+    c221 = 1 / r
+    c212 = c221
+    c233 = -cth * sth
 
     ----------------------------------------
 
-    c331 = ([3,3,1], 1 / r)
-    c313 = ([3,1,3], snd c331)
-    c332 = ([3,3,2], cth / sth)
-    c323 = ([3,2,3], snd c332)
+    c331 = 1 / r
+    c313 = c331
+    c332 = cth / sth
+    c323 = c332
 
     ----------------------------------------  
 
-    c = 0
+    c = [[[c000, c001, 0, 0], [c010, c011, 0, 0], [0, 0, c022, 0], [0, 0, 0, c033]],
+         [[c100, c101, 0, 0], [c110, c111, 0, 0], [0, 0, c122, 0], [0, 0, 0, c133]],
+         [[0, 0, 0, 0], [0, 0, c212, 0], [0, c221, 0, 0], [0, 0, 0, c233]],
+         [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
