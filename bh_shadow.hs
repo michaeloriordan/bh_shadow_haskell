@@ -17,8 +17,8 @@ cxlims = (-5, 5)
 cylims = (-5, 5)
 
 -- Number of pixels (photons)
-nx = 10
-ny = 10
+nx = 64
+ny = 64
 
 -- Initial k^0 component of photon momentum
 k0_init = 10.0
@@ -329,9 +329,6 @@ data_to_string d = unlines [unwords (map show di) | di <- d]
 --------------------------------------------------------------------------------
 
 main = do
-    print "Propagating photons"
     let phs = propagate_photons photons
-    print "Saving data"
     let dsave = data_to_save phs cpixels 
     writeFile "data.txt" (data_to_string dsave)
-    print "Done"
