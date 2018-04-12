@@ -146,20 +146,22 @@ step_geodesic_rk4 ph dl = Photon xp kp where
     f1x = k
     f1k = dkdl x k
 
-    kt1 = zipWith (+) k (map (dll *) f1k)
-    xt1 = zipWith (+) x (map (dll *) f1x)
+    x_plus_ay x a y = zipWith (+) x $ map (a *) y
+
+    kt1 = x_plus_ay k dll f1k
+    xt1 = x_plus_ay x dll f1x
 
     f2x = kt1
     f2k = dkdl xt1 kt1
 
-    kt2 = zipWith (+) k (map (dll *) f2k)
-    xt2 = zipWith (+) x (map (dll *) f2x)
+    kt2 = x_plus_ay k dll f2k
+    xt2 = x_plus_ay x dll f2x
 
     f3x = kt2
     f3k = dkdl xt2 kt2
 
-    kt3 = zipWith (+) k (map (dl *) f3k)
-    xt3 = zipWith (+) x (map (dl *) f3x)
+    kt3 = x_plus_ay k dl f3k
+    xt3 = x_plus_ay x dl f3x
 
     f4x = kt3
     f4k = dkdl xt3 kt3
