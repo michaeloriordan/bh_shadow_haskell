@@ -281,7 +281,7 @@ propagate_photons phs = [propagate_photon ph | ph <- phs]
 
 fst' (x, _, _) = x
 snd' (_, x, _) = x
-third (_, _, x) = x
+trd' (_, _, x) = x
 
 data_to_save :: [Photon] -> [(Double, Double)] -> [[Double]]
 data_to_save phs pixels = data2save where
@@ -293,7 +293,7 @@ data_to_save phs pixels = data2save where
                  let y = snd pix,
                  let r = fst' pos,
                  let th = snd' pos,
-                 let phi = third pos]
+                 let phi = trd' pos]
 
 data_to_string :: [[Double]] -> [Char]
 data_to_string d = unlines [unwords (map show di) | di <- d]
