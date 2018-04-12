@@ -1,4 +1,15 @@
-data Photon = Photon {photon_x, photon_k :: [Double]} deriving (Show)
+data Vec1 = Vec1 {v1data :: [Double]} deriving (Show)
+
+v1plus :: Vec1 -> Vec1 -> Vec1
+v1plus a b = Vec1 $ zipWith (+) (v1data a) (v1data b)
+
+v1mult:: Double -> Vec1 -> Vec1
+v1mult a b = Vec1 $ map (a *) (v1data b)
+
+data Vec2 = Vec2 {v2data :: [[Double]]} deriving (Show)
+data Vec3 = Vec3 {v3data :: [[[Double]]]} deriving (Show)
+
+data Photon = Photon {photon_x, photon_k :: Vec1} deriving (Show)
 
 camera_r = 100
 camera_i = pi/2
@@ -36,12 +47,12 @@ init_photon cr ci x y k0 = Photon xi ki where
          (sqrt $ x^2 + (cr*sini - y*cosi)^2)
     k3 = k0 * (x*sini) / (x^2 + (cr*sini - y*cosi)^2)
 
-    xi = [0.0, r, th, phi]
-    ki = [k0, k1, k2, k3]
+    xi = Vec1 [0.0, r, th, phi]
+    ki = Vec1 [k0, k1, k2, k3]
 
 photons = [init_photon camera_r camera_i x y kk0 | (x, y) <- cpoints]
 
-gcov_schwarzschild_GP :: Double -> Double -> [[Double]]
+gcov_schwarzschild_GP :: Double -> Double -> Vec2
 gcov_schwarzschild_GP r th = g where
     r2 = r^2
     b = 1 - (2 / r)
@@ -54,9 +65,9 @@ gcov_schwarzschild_GP r th = g where
     g01 = sqrt (2 / r)
     g10 = g01
 
-    g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
+    g = Vec2 [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
 
-gcon_schwarzschild_GP :: Double -> Double -> [[Double]]
+gcon_schwarzschild_GP :: Double -> Double -> Vec2
 gcon_schwarzschild_GP r th = g where
     r2 = r^2
     b = 1 - (2 / r)
@@ -69,9 +80,9 @@ gcon_schwarzschild_GP r th = g where
     g01 = sqrt (2 / r)
     g10 = g01
 
-    g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
+    g = Vec2 [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
 
-conn_schwarzschild_GP :: Double -> Double -> [[[Double]]]
+conn_schwarzschild_GP :: Double -> Double -> Vec3
 conn_schwarzschild_GP r th = c where
     b = sqrt (2 / r)
     br = b * r
@@ -115,26 +126,29 @@ conn_schwarzschild_GP r th = c where
 
     ----------------------------------------  
 
-    c = [[[c000, c001, 0, 0], [c010, c011, 0, 0], [0, 0, c022, 0], [0, 0, 0, c033]],
-         [[c100, c101, 0, 0], [c110, c111, 0, 0], [0, 0, c122, 0], [0, 0, 0, c133]],
-         [[0, 0, 0, 0], [0, 0, c212, 0], [0, c221, 0, 0], [0, 0, 0, c233]],
-         [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
+    c = Vec3 [[[c000, c001, 0, 0], [c010, c011, 0, 0], [0, 0, c022, 0], [0, 0, 0, c033]],
+              [[c100, c101, 0, 0], [c110, c111, 0, 0], [0, 0, c122, 0], [0, 0, 0, c133]],
+              [[0, 0, 0, 0], [0, 0, c212, 0], [0, c221, 0, 0], [0, 0, 0, c233]],
+              [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
 
-gcov :: [Double] -> Double -> [[Double]]
-gcov (x0:x1:x2:x3) a = g where
+gcov :: Vec1 -> Double -> Vec2
+gcov x a = g where
+    x0:x1:x2:x3 = v1data x
     g = gcov_schwarzschild_GP x1 x2
 
-gcon :: [Double] -> Double -> [[Double]]
-gcon (x0:x1:x2:x3) a = g where
+gcon :: Vec1 -> Double -> Vec2
+gcon x a = g where
+    x0:x1:x2:x3 = v1data x
     g = gcon_schwarzschild_GP x1 x2
 
-conn :: [Double] -> Double -> [[[Double]]]
-conn (x0:x1:x2:x3) a = g where
+conn :: Vec1 -> Double -> Vec3
+conn x a = g where
+    x0:x1:x2:x3 = v1data x
     g = conn_schwarzschild_GP x1 x2
 
-dkdl :: [Double] -> [Double] -> [Double]
+dkdl :: Vec1 -> Vec1 -> Vec1
 dkdl x k = dk where
-    dk = [1, 1, 1, 1]
+    dk = Vec1 [1, 1, 1, 1]
 
 step_geodesic_rk4 :: Photon -> Double -> Photon
 step_geodesic_rk4 ph dl = Photon xp kp where
@@ -146,30 +160,28 @@ step_geodesic_rk4 ph dl = Photon xp kp where
     f1x = k
     f1k = dkdl x k
 
-    x_plus_ay x a y = zipWith (+) x $ map (a *) y
-
-    kt1 = x_plus_ay k dll f1k
-    xt1 = x_plus_ay x dll f1x
+    kt1 = k `v1plus` (dll `v1mult` f1k)
+    xt1 = x `v1plus` (dll `v1mult` f1x)
 
     f2x = kt1
     f2k = dkdl xt1 kt1
 
-    kt2 = x_plus_ay k dll f2k
-    xt2 = x_plus_ay x dll f2x
+    kt2 = k `v1plus` (dll `v1mult` f2k)
+    xt2 = x `v1plus` (dll `v1mult` f2x)
 
     f3x = kt2
     f3k = dkdl xt2 kt2
 
-    kt3 = x_plus_ay k dl f3k
-    xt3 = x_plus_ay x dl f3x
+    kt3 = k `v1plus` (dl `v1mult` f3k)
+    xt3 = x `v1plus` (dl `v1mult` f3x)
 
     f4x = kt3
     f4k = dkdl xt3 kt3
 
     frac = 0.166666666666667
 
-    dx = map (frac * dl *) (zipWith (+) (zipWith (+) f1x (map (2 *) (zipWith (+) f2x f3x))) f4x)
-    dk = map (frac * dl *) (zipWith (+) (zipWith (+) f1k (map (2 *) (zipWith (+) f2k f3k))) f4k)
+    dx = (frac * dl) `v1mult` (f1x `v1plus` (2 `v1mult` (f2x `v1plus` f3x)) `v1plus` f4x)
+    dk = (frac * dl) `v1mult` (f1k `v1plus` (2 `v1mult` (f2k `v1plus` f3k)) `v1plus` f4k)
 
-    xp = zipWith (+) x dx
-    kp = zipWith (+) k dk
+    xp = x `v1plus` dx
+    kp = k `v1plus` dk
