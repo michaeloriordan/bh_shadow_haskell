@@ -325,9 +325,7 @@ data_to_save phs pixels = data2save where
                else if photon_captured ph then 0
                else -1 | ph <- phs]
     data2save = [[x, y, r, th, phi, esc] 
-                 | (pix, pos, esc) <- zip3 pixels positions escaped,
-                 let (x,y) = pix,
-                 let (r,th,phi) = pos]
+                 | ((x,y), (r,th,phi), esc) <- zip3 pixels positions escaped]
 
 data_to_string :: [[Double]] -> [Char]
 data_to_string d = unlines [unwords (map show di) | di <- d]
