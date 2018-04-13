@@ -324,13 +324,6 @@ data_to_save phs pixels = data2save where
     escaped = [if photon_escaped ph then 1 
                else if photon_captured ph then 0
                else -1 | ph <- phs]
-    --data2save = [[x, y, r, th, phi, esc] 
-    --             | (pix, pos, esc) <- zip3 pixels positions escaped,
-    --             let x = fst pix,
-    --             let y = snd pix,
-    --             let r = fst' pos,
-    --             let th = snd' pos,
-    --             let phi = trd' pos]
     data2save = [[x, y, r, th, phi, esc] 
                  | (pix, pos, esc) <- zip3 pixels positions escaped,
                  let (x,y) = pix,
