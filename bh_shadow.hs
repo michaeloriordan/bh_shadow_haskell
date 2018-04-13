@@ -310,10 +310,6 @@ propagate_photons phs = map (propagate_photon 0) phs
 
 --------------------------------------------------------------------------------
 
-fst' (x, _, _) = x
-snd' (_, x, _) = x
-trd' (_, _, x) = x
-
 -- Save: "x y r th phi escaped" 
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
