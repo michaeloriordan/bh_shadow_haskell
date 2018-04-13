@@ -1,0 +1,14 @@
+#! /bin/bash
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
