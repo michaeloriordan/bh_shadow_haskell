@@ -18,8 +18,8 @@ cxlims = (-10, 10)
 cylims = (-10, 10)
 
 -- Number of pixels (photons)
-nx = 1024
-ny = 1024
+nx = 64
+ny = 64
 
 -- Initial k^0 component of photon momentum
 k0_init = 10.0
@@ -324,13 +324,17 @@ data_to_save phs pixels = data2save where
     escaped = [if photon_escaped ph then 1 
                else if photon_captured ph then 0
                else -1 | ph <- phs]
+    --data2save = [[x, y, r, th, phi, esc] 
+    --             | (pix, pos, esc) <- zip3 pixels positions escaped,
+    --             let x = fst pix,
+    --             let y = snd pix,
+    --             let r = fst' pos,
+    --             let th = snd' pos,
+    --             let phi = trd' pos]
     data2save = [[x, y, r, th, phi, esc] 
                  | (pix, pos, esc) <- zip3 pixels positions escaped,
-                 let x = fst pix,
-                 let y = snd pix,
-                 let r = fst' pos,
-                 let th = snd' pos,
-                 let phi = trd' pos]
+                 let (x,y) = pix,
+                 let (r,th,phi) = pos]
 
 data_to_string :: [[Double]] -> [Char]
 data_to_string d = unlines [unwords (map show di) | di <- d]
