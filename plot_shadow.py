@@ -30,9 +30,10 @@ def plot_shadow(filename, plotname, nx, ny):
     fig, ax = init_fig(xlabel='$x/r_g$', ylabel='$y/r_g$')
 
     dth = np.pi / 10
-    esc[esc == 0 and np.remainder(th / dth, 2)] = 2
+    th_ring = np.remainder((th/dth).astype(int), 2)
+    esc[np.logical_and(esc == 0, th_ring == 0)] = 0.5
 
-    ax.imshow(esc, extent=[x.min(), x.max(), y.min(), y.max()], 
+    ax.imshow(esc.T, extent=[x.min(), x.max(), y.min(), y.max()], 
               cmap=plt.get_cmap('gray'), interpolation='none')
 
     fig.savefig(plotname+'.png', format='png', dpi=300)
