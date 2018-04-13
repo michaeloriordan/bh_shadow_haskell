@@ -18,8 +18,8 @@ cxlims = (-10, 10)
 cylims = (-10, 10)
 
 -- Number of pixels (photons)
-nx = 512
-ny = 512
+nx = 1024
+ny = 1024
 
 -- Initial k^0 component of photon momentum
 k0_init = 10.0
