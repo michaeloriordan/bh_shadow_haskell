@@ -12,7 +12,7 @@ def read_txt(filename):
                      delim_whitespace=True, engine='c')
     return df.values.T
     
-def init_fig(xlabel, ylabel):
+def init_fig(xlabel='$x$', ylabel='$y$'):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set_xlabel(xlabel)
@@ -27,9 +27,10 @@ def plot_shadow(filename, plotname, nx, ny):
     d = read_txt(filename)
     x, y, r, th, phi, esc = d.reshape(d.shape[0], nx, ny)
 
-    xlabel = '$x/r_g$'
-    ylabel = '$y/r_g$'
-    fig, ax = init_fig(xlabel, ylabel)
+    fig, ax = init_fig(xlabel='$x/r_g$', ylabel='$y/r_g$')
+
+    dth = np.pi / 10
+    esc[esc == 0 and np.remainder(th / dth, 2)] = 2
 
     ax.imshow(esc, extent=[x.min(), x.max(), y.min(), y.max()], 
               cmap=plt.get_cmap('gray'), interpolation='none')
@@ -40,6 +41,6 @@ def plot_shadow(filename, plotname, nx, ny):
 if __name__ == '__main__':
     filename = 'data.txt'
     plotname = 'shadow'
-    nx = 64
-    ny = 64
+    nx = 512
+    ny = 512
     plot_shadow(filename, plotname, nx, ny)
