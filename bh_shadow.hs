@@ -14,8 +14,8 @@ camera_r = 100
 camera_i = pi/2
 
 -- Camera size
-cxlims = (-5, 5)
-cylims = (-5, 5)
+cxlims = (-10, 10)
+cylims = (-10, 10)
 
 -- Number of pixels (photons)
 nx = 64
