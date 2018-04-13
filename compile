@@ -1,0 +1,3 @@
+#! /bin/bash
+
+ghc -o bh_shadow -O2 bh_shadow.hs
