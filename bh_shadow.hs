@@ -310,18 +310,22 @@ propagate_photons phs = map (propagate_photon 0) phs
 
 --------------------------------------------------------------------------------
 
--- Save: "x y r th phi escaped" 
+photon_status :: Photon -> Double
+photon_status ph
+    | photon_captured ph = 0
+    | photon_escaped ph = 1
+    | otherwise = -1
+
+-- Save: "x y r th phi status" 
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
--- Escaped: 1 or 0 (-1 for stuck)
+-- Status: escaped, captured, or stuck
 data_to_save :: [Photon] -> [(Double, Double)] -> [[Double]]
 data_to_save phs pixels = data2save where
     positions = [(photon_r ph, photon_th ph, photon_phi ph) | ph <- phs]
-    escaped = [if photon_escaped ph then 1 
-               else if photon_captured ph then 0
-               else -1 | ph <- phs]
-    data2save = [[x, y, r, th, phi, esc] 
-                 | ((x,y), (r,th,phi), esc) <- zip3 pixels positions escaped]
+    status = map photon_status phs
+    data2save = [[x, y, r, th, phi, stat] 
+                 | ((x,y), (r,th,phi), stat) <- zip3 pixels positions status]
 
 data_to_string :: [[Double]] -> [Char]
 data_to_string d = unlines [unwords (map show di) | di <- d]
