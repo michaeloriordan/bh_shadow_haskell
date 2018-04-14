@@ -479,7 +479,6 @@ photon_captured ph = (photon_r ph) <= (rh + delta_rh)
 
 --------------------------------------------------------------------------------
 
-
 parmap :: (a -> b) -> [a] -> [b]
 parmap f = parmap' chunk_size par_strat f
 
