@@ -43,7 +43,9 @@ step_epsilon = 0.01
 max_n = 100000
 
 -- Stop outside horizon in Schwarzschild or Boyer-Lindquist coords
-delta_rh = 1.0e-6
+delta_rh 
+    | coords == Kerr_BL = 1.0e-6
+    | otherwise = 0.0
 
 --------------------------------------------------------------------------------
 
@@ -244,11 +246,20 @@ dkdl x (k0:k1:k2:k3:_) = dk where
 --------------------------------------------------------------------------------
 
 stepsize :: [Double] -> [Double] -> Double
-stepsize (_:x1:_) (_:k1:k2:k3:_) = dl where
+stepsize x k
+    | coords == Kerr_BL = min (stepsize' x k) (stepsize'' x k)
+    | otherwise = stepsize' x k
+
+stepsize' :: [Double] -> [Double] -> Double
+stepsize' (_:x1:_) (_:k1:k2:k3:_) = dl where
     d1 = abs k1 / x1
     d2 = abs k2
     d3 = abs k3
     dl = step_epsilon / (d1 + d2 + d3)
+
+stepsize'' :: [Double] -> [Double] -> Double
+stepsize'' (_:x1:_) (_:k1:_) = dl where
+    dl = (x1 - rh) / (2 * abs k1)
 
 step_geodesic_rk4 :: Photon -> Double -> Photon
 step_geodesic_rk4 ph dl = phf where
@@ -318,7 +329,7 @@ photon_escaped :: Photon -> Bool
 photon_escaped ph = (photon_r ph) > max_r
 
 photon_captured :: Photon -> Bool
-photon_captured ph = (photon_r ph) <= rh
+photon_captured ph = (photon_r ph) <= (rh + delta_rh)
 
 --------------------------------------------------------------------------------
 
