@@ -261,6 +261,8 @@ stepsize'' :: [Double] -> [Double] -> Double
 stepsize'' (_:x1:_) (_:k1:_) = dl where
     dl = (x1 - rh) / (2 * abs k1)
 
+--------------------------------------------------------------------------------
+
 step_geodesic_rk4 :: Photon -> Double -> Photon
 step_geodesic_rk4 ph dl = phf where
     x = photon_x ph
@@ -305,6 +307,8 @@ step_photon ph = phf where
     dl = stepsize (photon_x ph) (photon_k ph)
     phh = step_geodesic ph dl
     phf = bound_spherical phh
+
+--------------------------------------------------------------------------------
 
 bound_spherical :: Photon -> Photon
 bound_spherical ph 
