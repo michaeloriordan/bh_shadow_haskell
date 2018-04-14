@@ -323,8 +323,8 @@ photon_status ph
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
-data_to_save :: [Photon] -> [(Double, Double)] -> [[Double]]
-data_to_save phs pixels = data2save where
+data_to_save' :: [Photon] -> [(Double, Double)] -> [[Double]]
+data_to_save' phs pixels = data2save where
     positions = map photon_pos phs
     status = map photon_status phs
     data2save = [[x, y, r, th, phi, stat] 
@@ -333,9 +333,11 @@ data_to_save phs pixels = data2save where
 data_to_string :: [[Double]] -> [Char]
 data_to_string d = unlines [unwords (map show di) | di <- d]
 
+data_to_save :: [Photon] -> [(Double, Double)] -> [Char]
+data_to_save phs pixels = data_to_string $ data_to_save' phs pixels
+
 --------------------------------------------------------------------------------
 
 main = do
     let phs = propagate_photons photons
-    let dsave = data_to_save phs cpixels 
-    writeFile "data.txt" (data_to_string dsave)
+    writeFile "data.txt" $ data_to_save phs cpixels
