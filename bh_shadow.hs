@@ -361,10 +361,11 @@ conn x
 dot :: Num a => [a] -> [a] -> a
 dot x y = sum $ zipWith (*) x y
 
+dot2 :: Num a => [a] -> [a] -> [[a]] -> a
+dot2 x y z = dot x $ map (dot y) z 
+
 dkdl :: [Double] -> [Double] -> [Double] 
-dkdl x k = dk where
-    c = conn x
-    dk = [-(dot k $ map (dot k) ci) | ci <- c]
+dkdl x k = [-(dot2 k k c) | c <- conn x]
     
 --------------------------------------------------------------------------------
 
