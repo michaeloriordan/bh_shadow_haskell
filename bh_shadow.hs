@@ -58,6 +58,9 @@ photon_phi :: Photon -> Double
 photon_phi ph = phi where
     (_:_:_:phi:_) = photon_x ph
 
+photon_rtp :: Photon -> (Double, Double, Double)
+photon_rtp ph = (photon_r ph, photon_th ph, photon_phi ph)
+
 --------------------------------------------------------------------------------
 
 rh = 1 + sqrt (1 - spin^2)
@@ -322,7 +325,7 @@ photon_status ph
 -- Status: escaped, captured, or stuck
 data_to_save :: [Photon] -> [(Double, Double)] -> [[Double]]
 data_to_save phs pixels = data2save where
-    positions = [(photon_r ph, photon_th ph, photon_phi ph) | ph <- phs]
+    positions = map photon_rtp phs
     status = map photon_status phs
     data2save = [[x, y, r, th, phi, stat] 
                  | ((x,y), (r,th,phi), stat) <- zip3 pixels positions status]
