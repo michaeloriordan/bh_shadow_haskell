@@ -61,6 +61,8 @@ photon_phi ph = phi where
 photon_pos :: Photon -> (Double, Double, Double)
 photon_pos ph = (photon_r ph, photon_th ph, photon_phi ph)
 
+data Pixel = Pixel {pixel_xy :: (Double, Double)} deriving (Show)
+
 --------------------------------------------------------------------------------
 
 rh = 1 + sqrt (1 - spin^2)
@@ -76,13 +78,12 @@ dy = (cymax - cymin) / (ny-1)
 cxs = [cxmin, cxmin+dx .. cxmax]
 cys = [cymin, cymin+dy .. cymax]
 
-cpixels = [(x, y) | x <- cxs, y <- cys]
+cpixels = [Pixel (x, y) | x <- cxs, y <- cys]
 
 -- Assuming camera far from BH => flat space - Johannsen & Psaltis (2010)
-init_photon :: Double -> Double -> Double -> (Double, Double) -> Photon
+init_photon :: Double -> Double -> Double -> Pixel -> Photon
 init_photon k0 cr ci pixel = Photon xi ki where
-    x = fst pixel
-    y = snd pixel
+    (x, y) = pixel_xy pixel
     sini = sin ci
     cosi = cos ci
 
@@ -323,17 +324,18 @@ photon_status ph
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
-data_to_save' :: [Photon] -> [(Double, Double)] -> [[Double]]
+data_to_save' :: [Photon] -> [Pixel] -> [[Double]]
 data_to_save' phs pixels = data2save where
     positions = map photon_pos phs
     status = map photon_status phs
+    pixs = map pixel_xy pixels
     data2save = [[x, y, r, th, phi, stat] 
-                 | ((x,y), (r,th,phi), stat) <- zip3 pixels positions status]
+                 | ((x,y), (r,th,phi), stat) <- zip3 pixs positions status]
 
 data_to_string :: [[Double]] -> [Char]
 data_to_string d = unlines [unwords (map show di) | di <- d]
 
-data_to_save :: [Photon] -> [(Double, Double)] -> [Char]
+data_to_save :: [Photon] -> [Pixel] -> [Char]
 data_to_save phs pixels = data_to_string $ data_to_save' phs pixels
 
 --------------------------------------------------------------------------------
