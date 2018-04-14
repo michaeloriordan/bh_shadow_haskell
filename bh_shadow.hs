@@ -25,10 +25,11 @@ ny = 64
 k0_init = 10.0
 
 -- Coordinate system
-coords = Schwarzschild_GP
+--coords = Schwarzschild_GP
+coords = Kerr_BL
 
 -- Black hole spin
-spin = 0.0
+spin = 0.9
 
 -- Radius beyond which photons have "escaped"
 max_r = camera_r + 10
@@ -212,7 +213,7 @@ gcov_kerr_BL (_:r:th:_) = g where
     g03 = - b * a * sth2
     g30 = g03
 
-    g = [[g00,0,0,g03], [0,g11,0,0], [0,g22,0,0], [g30,0,0,g33]]
+    g = [[g00,0,0,g03], [0,g11,0,0], [0,0,g22,0], [g30,0,0,g33]]
 
 gcon_kerr_BL :: [Double] -> [[Double]]
 gcon_kerr_BL (_:r:th:_) = g where
@@ -232,7 +233,7 @@ gcon_kerr_BL (_:r:th:_) = g where
     g03 = - 2 * a * r / (delta * sigma)
     g30 = g03
 
-    g = [[g00,0,0,g03], [0,g11,0,0], [0,g22,0,0], [g30,0,0,g33]]
+    g = [[g00,0,0,g03], [0,g11,0,0], [0,0,g22,0], [g30,0,0,g33]]
 
 conn_kerr_BL :: [Double] -> [[[Double]]]
 conn_kerr_BL (_:r:th:_) = c where
@@ -325,7 +326,7 @@ conn_kerr_BL (_:r:th:_) = c where
     c = [[[0,c001,c002,0], [c010,0,0,c013], [c020,0,0,c023], [0,c031,c032,0]],
          [[c100,0,0,c103], [0,c111,c112,0], [0,c121,c122,0], [c130,0,0,c133]],
          [[c200,0,0,c203], [0,c211,c212,0], [0,c221,c222,0], [c230,0,0,c233]],
-         [[0,c301,c302,c313], [c310,0,0,0], [c320,0,0,c323], [0,c331,c332,0]]]
+         [[0,c301,c302,0], [c310,0,0,c313], [c320,0,0,c323], [0,c331,c332,0]]]
 
 --------------------------------------------------------------------------------
 
