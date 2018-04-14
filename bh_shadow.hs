@@ -25,7 +25,6 @@ ny = 64
 k0_init = 10.0
 
 -- Coordinate system
---coords = Schwarzschild_GP
 coords = Kerr_BL
 
 -- Black hole spin
