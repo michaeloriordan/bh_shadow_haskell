@@ -189,17 +189,143 @@ conn_schwarzschild_GP (_:r:th:_) = c where
 
 --------------------------------------------------------------------------------
 
+delta_kerr :: Double -> Double
+delta_kerr r = r^2 - 2*r + spin^2;
+
+sigma_kerr :: Double -> Double -> Double
+sigma_kerr r th = r^2 + (spin^2) * (cos th)^2
+
 gcov_kerr_BL :: [Double] -> [[Double]]
 gcov_kerr_BL (_:r:th:_) = g where
-    g = [[0]]
+    sigma = sigma_kerr r th
+    delta = delta_kerr r
+    sth2 = (sin th)^2
+    r2 = r^2
+    a = spin
+    a2 = a^2
+    b = 2 * r / sigma
+
+    g00 = -(1 - b)
+    g11 = sigma / delta
+    g22 = sigma
+    g33 = (r2 + a2 + b * a2 * sth2) * sth2
+    g03 = - b * a * sth2
+    g30 = g03
+
+    g = [[g00,0,0,g03], [0,g11,0,0], [0,g22,0,0], [g30,0,0,g33]]
 
 gcon_kerr_BL :: [Double] -> [[Double]]
 gcon_kerr_BL (_:r:th:_) = g where
-    g = [[0]]
+    sigma = sigma_kerr r th
+    delta = delta_kerr r
+    sth2 = (sin th)^2
+    r2 = r^2
+    a = spin
+    a2 = a^2
+
+    a_kerr = (r2 + a2) * (r2 + a2) - a2 * delta * sth2
+
+    g00 = -a_kerr / (sigma * delta)
+    g11 = delta / sigma
+    g22 = 1 / sigma
+    g33 = (delta - a2 * sth2) / (sigma * delta * sth2)
+    g03 = - 2 * a * r / (delta * sigma)
+    g30 = g03
+
+    g = [[g00,0,0,g03], [0,g11,0,0], [0,g22,0,0], [g30,0,0,g33]]
 
 conn_kerr_BL :: [Double] -> [[[Double]]]
 conn_kerr_BL (_:r:th:_) = c where
-    c = [[[0]]]
+    delta = delta_kerr r
+    sigma = sigma_kerr r th
+
+    cth = cos th
+    sth = sin th
+    sth2 = sth^2
+    cth2 = cth^2
+    sth3 = sth^3
+
+    cotth = cth / sth
+
+    a = spin
+    r2 = r^2
+    a2 = a^2
+    a3 = a^3
+    a4 = a^4
+
+    sigma_m = r2 - a2 * cth2
+
+    sigma2 = sigma^2
+    sigma3 = sigma^3
+
+    a_kerr = (r2 + a2) * (r2 + a2) - a2 * delta * sth2
+
+    ---------------------------------------- 
+    
+    c010 = (r2 + a2) * sigma_m / (sigma2 * delta)
+    c001 = c010
+
+    c020 = -2 * a2 * r * sth * cth / sigma2
+    c002 = c020
+
+    c031 = a * sth2 * (a2 * cth2 * (a2 - r2) - r2 * (a2 + 3 * r2)) / (sigma2 * delta)
+    c013 = c031
+
+    c032 = 2 * a3 * r * sth3 * cth / sigma2
+    c023 = c032
+
+    ---------------------------------------- 
+    
+    c100 = delta * sigma_m / sigma3
+
+    c111 = (r * a2 * sth2 - sigma_m) / (sigma * delta)
+
+    c121 = - a2 * sth * cth / sigma
+    c112 = c121
+
+    c122 = - r * delta / sigma
+
+    c130 = - delta * a * sth2 * sigma_m / sigma3
+    c103 = c130
+
+    c133 = (delta * sth2 / sigma3) * (-r * sigma2 + a2 * sth2 * sigma_m)
+
+    ---------------------------------------- 
+    
+    c200 = -2 * a2 * r * sth * cth / sigma3
+
+    c211 = a2 * sth * cth / (sigma * delta)
+
+    c221 = r / sigma
+    c212 = c221
+
+    c222 = - a2 * sth * cth / sigma
+
+    c230 = 2 * a * r * (r2 + a2) * sth * cth / sigma3
+    c203 = c230
+
+    c233 = - (sth * cth / sigma3) * (a_kerr * sigma + 2 * (r2 + a2) * a2 * r * sth2)
+
+    ----------------------------------------
+    
+    c310 = a * sigma_m / (sigma2 * delta)
+    c301 = c310
+
+    c320 = -2 * a * r * cotth / sigma2
+    c302 = c320
+
+    c331 = (r * sigma2 + a4 * sth2 * cth2 - r2 * (sigma + r2 + a2)) / (sigma2 * delta)
+    c313 = c331
+
+    c332 = (cotth / sigma2) * (sigma2 + 2 * a2 * r * sth2)
+    c323 = c332
+
+    ----------------------------------------
+    
+    c = [[[0,c001,c002,0], [c010,0,0,c013], [c020,0,0,c023], [0,c031,c032,0]],
+         [[c100,0,0,c103], [0,c111,c112,0], [0,c121,c122,0], [c130,0,0,c133]],
+         [[c200,0,0,c203], [0,c211,c212,0], [0,c221,c222,0], [c230,0,0,c233]],
+         [[0,c301,c302,c313], [c310,0,0,0], [c320,0,0,c323], [0,c331,c332,0]]]
 
 --------------------------------------------------------------------------------
 
