@@ -187,6 +187,8 @@ conn_schwarzschild_GP (_:r:th:_) = c where
          [[0, 0, 0, 0], [0, 0, c212, 0], [0, c221, 0, 0], [0, 0, 0, c233]],
          [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
 
+--------------------------------------------------------------------------------
+
 gcov_kerr_BL :: [Double] -> [[Double]]
 gcov_kerr_BL (_:r:th:_) = g where
     g = [[0]]
@@ -198,6 +200,8 @@ gcon_kerr_BL (_:r:th:_) = g where
 conn_kerr_BL :: [Double] -> [[[Double]]]
 conn_kerr_BL (_:r:th:_) = c where
     c = [[[0]]]
+
+--------------------------------------------------------------------------------
 
 gcov :: [Double] -> [[Double]]
 gcov x
@@ -216,6 +220,8 @@ conn x
     | coords == Schwarzschild_GP = conn_schwarzschild_GP x
     | coords == Kerr_BL = conn_kerr_BL x
     | otherwise = error "Unknown coords!"
+
+--------------------------------------------------------------------------------
 
 -- Assumes coordinate basis => use symmetry in the connection
 dkdl :: [Double] -> [Double] -> [Double] 
