@@ -4,7 +4,7 @@ import System.IO
 
 --------------------------------------------------------------------------------
 
-data Coords = Schwarzschild_GP deriving (Eq)
+data Coords = Schwarzschild_GP | Kerr_BL deriving (Eq)
 data Integrator = RK4 deriving (Eq)
 
 --------------------------------------------------------------------------------
@@ -41,6 +41,9 @@ step_epsilon = 0.01
 
 -- Max number of steps before photon "stuck"
 max_n = 100000
+
+-- Stop outside horizon in Schwarzschild or Boyer-Lindquist coords
+delta_rh = 1.0e-6
 
 --------------------------------------------------------------------------------
 
@@ -182,19 +185,34 @@ conn_schwarzschild_GP (_:r:th:_) = c where
          [[0, 0, 0, 0], [0, 0, c212, 0], [0, c221, 0, 0], [0, 0, 0, c233]],
          [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
 
+gcov_kerr_BL :: [Double] -> [[Double]]
+gcov_kerr_BL (_:r:th:_) = g where
+    g = [[0]]
+
+gcon_kerr_BL :: [Double] -> [[Double]]
+gcon_kerr_BL (_:r:th:_) = g where
+    g = [[0]]
+
+conn_kerr_BL :: [Double] -> [[[Double]]]
+conn_kerr_BL (_:r:th:_) = c where
+    c = [[[0]]]
+
 gcov :: [Double] -> [[Double]]
 gcov x
     | coords == Schwarzschild_GP = gcov_schwarzschild_GP x
+    | coords == Kerr_BL = gcov_kerr_BL x
     | otherwise = error "Unknown coords!"
 
 gcon :: [Double] -> [[Double]]
 gcon x 
     | coords == Schwarzschild_GP = gcon_schwarzschild_GP x
+    | coords == Kerr_BL = gcon_kerr_BL x
     | otherwise = error "Unknown coords!"
 
 conn :: [Double] -> [[[Double]]]
 conn x
     | coords == Schwarzschild_GP = conn_schwarzschild_GP x
+    | coords == Kerr_BL = conn_kerr_BL x
     | otherwise = error "Unknown coords!"
 
 -- Assumes coordinate basis => use symmetry in the connection
@@ -280,6 +298,7 @@ step_photon ph = phf where
 bound_spherical :: Photon -> Photon
 bound_spherical ph 
     | coords == Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
+    | coords == Kerr_BL = bound_spherical' (photon_x ph) (photon_k ph)
     | otherwise = error "Unknown coords!"
 
 -- Assumes x2 and x3 usual theta and phi
