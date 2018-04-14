@@ -18,8 +18,8 @@ cxlims = (-10, 10)
 cylims = (-10, 10)
 
 -- Number of pixels (photons)
-nx = 64
-ny = 64
+nx = 256
+ny = 256
 
 -- Initial k^0 component of photon momentum
 k0_init = 10.0
@@ -45,7 +45,7 @@ max_n = 100000
 -- Stop outside horizon in Schwarzschild or Boyer-Lindquist coords
 delta_rh 
     | coords == Kerr_BL = 1.0e-6
-    | otherwise = 0.0
+    | otherwise         = 0.0
 
 -- Run code in parallel 
 do_parallel = False
@@ -341,19 +341,19 @@ conn_kerr_BL (_:r:th:_) = c where
 gcov :: [Double] -> [[Double]]
 gcov x
     | coords == Schwarzschild_GP = gcov_schwarzschild_GP x
-    | coords == Kerr_BL = gcov_kerr_BL x
+    | coords == Kerr_BL          = gcov_kerr_BL x
     | otherwise = error "Unknown coords!"
 
 gcon :: [Double] -> [[Double]]
 gcon x 
     | coords == Schwarzschild_GP = gcon_schwarzschild_GP x
-    | coords == Kerr_BL = gcon_kerr_BL x
+    | coords == Kerr_BL          = gcon_kerr_BL x
     | otherwise = error "Unknown coords!"
 
 conn :: [Double] -> [[[Double]]]
 conn x
     | coords == Schwarzschild_GP = conn_schwarzschild_GP x
-    | coords == Kerr_BL = conn_kerr_BL x
+    | coords == Kerr_BL          = conn_kerr_BL x
     | otherwise = error "Unknown coords!"
 
 --------------------------------------------------------------------------------
@@ -372,7 +372,7 @@ dkdl x k = [-(dot2 k k c) | c <- conn x]
 stepsize :: [Double] -> [Double] -> Double
 stepsize x k
     | coords == Kerr_BL = min (stepsize' x k) (stepsize'' x k)
-    | otherwise = stepsize' x k
+    | otherwise         = stepsize' x k
 
 stepsize' :: [Double] -> [Double] -> Double
 stepsize' (_:x1:_) (_:k1:k2:k3:_) = dl where
@@ -437,16 +437,16 @@ step_photon ph = phf where
 bound_spherical :: Photon -> Photon
 bound_spherical ph 
     | coords == Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
-    | coords == Kerr_BL = bound_spherical' (photon_x ph) (photon_k ph)
+    | coords == Kerr_BL          = bound_spherical' (photon_x ph) (photon_k ph)
     | otherwise = error "Unknown coords!"
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
 bound_spherical' :: [Double] -> [Double] -> Photon
 bound_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
-    | x2 > pi = Photon [x0, x1, 2*pi-x2, x3+pi] [k0, k1, -k2, k3]
-    | x2 < 0  = Photon [x0, x1, -x2, x3-pi] [k0, k1, -k2, k3]
-    | otherwise = Photon [x0, x1, x2, x3] [k0, k1, k2, k3]
+    | x2 > pi   = Photon [x0, x1, 2*pi-x2, x3+pi] [k0, k1, -k2, k3]
+    | x2 < 0    = Photon [x0, x1, -x2,     x3-pi] [k0, k1, -k2, k3]
+    | otherwise = Photon [x0, x1,  x2,     x3]    [k0, k1,  k2, k3]
 
 --------------------------------------------------------------------------------
 
@@ -477,15 +477,15 @@ propagate_photon n ph
 propagate_photons :: [Photon] -> [Photon]
 propagate_photons phs 
     | do_parallel = parmap (propagate_photon 0) phs
-    | otherwise = map (propagate_photon 0) phs
+    | otherwise   = map    (propagate_photon 0) phs
 
 --------------------------------------------------------------------------------
 
 photon_status :: Photon -> Double
 photon_status ph
     | photon_captured ph = 0
-    | photon_escaped ph = 1
-    | otherwise = -1
+    | photon_escaped ph  = 1
+    | otherwise          = -1
 
 -- Save: "x y r th phi status" 
 -- Initial pixel: (x, y)
@@ -494,8 +494,8 @@ photon_status ph
 data_to_save' :: [Photon] -> [Pixel] -> [[Double]]
 data_to_save' phs pixels = data2save where
     positions = map photon_pos phs
-    status = map photon_status phs
-    pixels' = map pixel_xy pixels
+    status    = map photon_status phs
+    pixels'   = map pixel_xy pixels
     data2save = [[x, y, r, th, phi, stat] 
                  | ((x,y), (r,th,phi), stat) <- zip3 pixels' positions status]
 

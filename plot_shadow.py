@@ -42,6 +42,6 @@ def plot_shadow(filename, plotname, nx, ny):
 if __name__ == '__main__':
     filename = 'data.txt'
     plotname = 'shadow'
-    nx = 64
-    ny = 64
+    nx = 256
+    ny = 256
     plot_shadow(filename, plotname, nx, ny)
