@@ -328,9 +328,9 @@ data_to_save' :: [Photon] -> [Pixel] -> [[Double]]
 data_to_save' phs pixels = data2save where
     positions = map photon_pos phs
     status = map photon_status phs
-    pixs = map pixel_xy pixels
+    pixels' = map pixel_xy pixels
     data2save = [[x, y, r, th, phi, stat] 
-                 | ((x,y), (r,th,phi), stat) <- zip3 pixs positions status]
+                 | ((x,y), (r,th,phi), stat) <- zip3 pixels' positions status]
 
 data_to_string :: [[Double]] -> [Char]
 data_to_string d = unlines [unwords (map show di) | di <- d]
