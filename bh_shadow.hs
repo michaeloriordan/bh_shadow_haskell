@@ -29,9 +29,10 @@ coords = Kerr_BL
 
 -- Black hole spin
 spin = 0.9
+rh = 1 + sqrt (1 - spin^2)
 
 -- Radius beyond which photons have "escaped"
-max_r = camera_r + 10
+rmax = camera_r + 10
 
 -- Integration method
 integrator = RK4
@@ -40,12 +41,12 @@ integrator = RK4
 step_epsilon = 0.01
 
 -- Max number of steps before photon "stuck"
-max_n = 100000
+nmax = 100000
 
--- Stop outside horizon in Schwarzschild or Boyer-Lindquist coords
-delta_rh 
-    | coords == Kerr_BL = 1.0e-6
-    | otherwise         = 0.0
+-- Stop slightly outside horizon in Schwarzschild or Boyer-Lindquist coords
+rmin
+    | coords == Kerr_BL = rh + 1.0e-6
+    | otherwise         = rh
 
 -- Run code in parallel 
 do_parallel = False
@@ -79,8 +80,6 @@ data Pixel = Pixel {pixel_xy :: (Double, Double)} deriving (Show)
 
 --------------------------------------------------------------------------------
 
-rh = 1 + sqrt (1 - spin^2)
-
 cxmin = fst cxlims
 cxmax = snd cxlims
 cymin = fst cylims
@@ -92,7 +91,9 @@ dy = (cymax - cymin) / (ny-1)
 cxs = [cxmin, cxmin+dx .. cxmax]
 cys = [cymin, cymin+dy .. cymax]
 
-cpixels = [Pixel (x, y) | x <- cxs, y <- cys]
+init_pixels = [Pixel (x, y) | x <- cxs, y <- cys]
+
+--------------------------------------------------------------------------------
 
 -- Assuming camera far from BH => flat space - Johannsen & Psaltis (2010)
 init_photon :: Double -> Double -> Double -> Pixel -> Photon
@@ -113,7 +114,8 @@ init_photon k0 cr ci pixel = Photon xi ki where
     xi = [0.0, r, th, phi]
     ki = [k0, k1, k2, k3]
 
-photons = map (init_photon k0_init camera_r camera_i) cpixels
+init_photons :: [Pixel] -> [Photon]
+init_photons pixels = map (init_photon k0_init camera_r camera_i) pixels
 
 --------------------------------------------------------------------------------
 
@@ -454,10 +456,10 @@ photon_finished :: Photon -> Bool
 photon_finished ph = (photon_escaped ph) || (photon_captured ph)
 
 photon_escaped :: Photon -> Bool
-photon_escaped ph = (photon_r ph) > max_r
+photon_escaped ph = (photon_r ph) > rmax
 
 photon_captured :: Photon -> Bool
-photon_captured ph = (photon_r ph) <= (rh + delta_rh)
+photon_captured ph = (photon_r ph) <= rmin
 
 --------------------------------------------------------------------------------
 
@@ -471,7 +473,7 @@ parmap' chunk strat f = withStrategy (parListChunk chunk strat) . map f
 
 propagate_photon :: Int -> Photon -> Photon
 propagate_photon n ph 
-    | photon_finished ph || n > max_n = ph
+    | photon_finished ph || n > nmax = ph
     | otherwise = propagate_photon (n+1) $ step_photon ph
 
 propagate_photons :: [Photon] -> [Photon]
@@ -507,6 +509,9 @@ data_to_save phs pixels = data_to_string $ data_to_save' phs pixels
 
 --------------------------------------------------------------------------------
 
+camera_pixels   = init_pixels
+initial_photons = init_photons camera_pixels
+final_photons   = propagate_photons initial_photons
+
 main = do
-    let phs = propagate_photons photons
-    writeFile "data.txt" $ data_to_save phs cpixels
+    writeFile "data.txt" $ data_to_save final_photons camera_pixels
