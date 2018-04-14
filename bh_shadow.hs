@@ -358,32 +358,14 @@ conn x
 
 --------------------------------------------------------------------------------
 
--- Assumes coordinate basis => use symmetry in the connection
+dot :: Num a => [a] -> [a] -> a
+dot x y = sum $ zipWith (*) x y
+
 dkdl :: [Double] -> [Double] -> [Double] 
-dkdl x (k0:k1:k2:k3:_) = dk where
+dkdl x k = dk where
     c = conn x
-
-    c00 = [c !!i !!0 !!0 | i <- [0..3]]
-    c11 = [c !!i !!1 !!1 | i <- [0..3]]
-    c22 = [c !!i !!2 !!2 | i <- [0..3]]
-    c33 = [c !!i !!3 !!3 | i <- [0..3]]
-    c01 = [c !!i !!0 !!1 | i <- [0..3]]
-    c02 = [c !!i !!0 !!2 | i <- [0..3]]
-    c03 = [c !!i !!0 !!3 | i <- [0..3]]
-    c12 = [c !!i !!1 !!2 | i <- [0..3]]
-    c13 = [c !!i !!1 !!3 | i <- [0..3]]
-    c23 = [c !!i !!2 !!3 | i <- [0..3]]
-
-    dk1 = [-2 * (k0 * (c01i * k1 + c02i * k2 + c03i * k3) + 
-                 k1 * (c12i * k2 + c13i * k3) + 
-                 k2 * (c23i * k3))
-           | (c01i,c02i,c03i,c12i,c13i,c23i) <- zip6 c01 c02 c03 c12 c13 c23]
-
-    dk2 = [c00i * k0^2 + c11i * k1^2 + c22i * k2^2 + c33i * k3^2
-           | (c00i,c11i,c22i,c33i) <- zip4 c00 c11 c22 c33]
-
-    dk = [dk1i - dk2i | (dk1i,dk2i) <- zip dk1 dk2]
-
+    dk = [-(dot k $ map (dot k) ci) | ci <- c]
+    
 --------------------------------------------------------------------------------
 
 stepsize :: [Double] -> [Double] -> Double
