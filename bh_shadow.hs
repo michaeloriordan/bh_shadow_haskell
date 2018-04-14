@@ -1,6 +1,6 @@
 import Data.List 
 import System.IO
---import Control.Parallel.Strategies
+import Control.Parallel.Strategies (Strategy,withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
 
@@ -18,8 +18,8 @@ cxlims = (-10, 10)
 cylims = (-10, 10)
 
 -- Number of pixels (photons)
-nx = 256
-ny = 256
+nx = 64
+ny = 64
 
 -- Initial k^0 component of photon momentum
 k0_init = 10.0
@@ -47,6 +47,15 @@ max_n = 100000
 delta_rh 
     | coords == Kerr_BL = 1.0e-6
     | otherwise = 0.0
+
+-- Run code in parallel 
+do_parallel = False
+
+-- Divide tasks into chunks
+chunk_size = round $ (nx * ny) / 8
+
+-- Parallel strategy 
+par_strat = rseq
 
 --------------------------------------------------------------------------------
 
@@ -470,14 +479,24 @@ photon_captured ph = (photon_r ph) <= (rh + delta_rh)
 
 --------------------------------------------------------------------------------
 
+
+parmap :: (a -> b) -> [a] -> [b]
+parmap f = parmap' chunk_size par_strat f
+
+parmap' :: Int -> Strategy b -> (a -> b) -> [a] -> [b]
+parmap' chunk strat f = withStrategy (parListChunk chunk strat) . map f
+
+--------------------------------------------------------------------------------
+
 propagate_photon :: Int -> Photon -> Photon
 propagate_photon n ph 
     | photon_finished ph || n > max_n = ph
     | otherwise = propagate_photon (n+1) $ step_photon ph
 
 propagate_photons :: [Photon] -> [Photon]
-propagate_photons phs = map (propagate_photon 0) phs
---propagate_photons phs = parMap rpar (propagate_photon 0) phs
+propagate_photons phs 
+    | do_parallel = parmap (propagate_photon 0) phs
+    | otherwise = map (propagate_photon 0) phs
 
 --------------------------------------------------------------------------------
 

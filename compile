@@ -1,3 +1,4 @@
 #! /bin/bash
 
 ghc -o bh_shadow -O2 bh_shadow.hs
+#ghc -o bh_shadow -threaded -O2 bh_shadow.hs
