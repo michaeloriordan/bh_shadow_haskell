@@ -363,6 +363,7 @@ dot x y = sum $ zipWith (*) x y
 dot2 :: Num a => [a] -> [a] -> [[a]] -> a
 dot2 x y z = dot x $ map (dot y) z 
 
+-- Geodesic equation
 dkdl :: [Double] -> [Double] -> [Double] 
 dkdl x k = [-(dot2 k k c) | c <- conn x]
     
