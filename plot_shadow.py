@@ -40,8 +40,8 @@ def plot_shadow(filename, plotname, nx, ny):
     plt.close(fig)
 
 if __name__ == '__main__':
-    filename = 'data_1024.txt'
+    filename = 'data.txt'
     plotname = 'shadow'
-    nx = 1024
-    ny = 1024
+    nx = 64
+    ny = 64
     plot_shadow(filename, plotname, nx, ny)

@@ -18,8 +18,8 @@ cxlims = (-10, 10)
 cylims = (-10, 10)
 
 -- Number of pixels (photons)
-nx = 256
-ny = 256
+nx = 64
+ny = 64
 
 -- Initial k^0 component of photon momentum
 k0_init = 10.0
@@ -365,7 +365,7 @@ dot2 x y z = dot x $ map (dot y) z
 
 -- Geodesic equation
 dkdl :: [Double] -> [Double] -> [Double] 
-dkdl x k = [-(dot2 k k c) | c <- conn x]
+dkdl x k = map (negate . dot2 k k) (conn x)
     
 --------------------------------------------------------------------------------
 
