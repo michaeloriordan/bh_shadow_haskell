@@ -112,7 +112,7 @@ init_photon k0 cr ci pixel = Photon xi ki where
     ki = [k0, k1, k2, k3]
 
 init_photons :: [Pixel] -> [Photon]
-init_photons pixels = map (init_photon k0_init camera_r camera_i) pixels
+init_photons = map $ init_photon k0_init camera_r camera_i
 
 --------------------------------------------------------------------------------
 
@@ -338,21 +338,21 @@ conn_kerr_BL (_:r:th:_) = c where
 --------------------------------------------------------------------------------
 
 gcov :: [Double] -> [[Double]]
-gcov x
-    | coords == Schwarzschild_GP = gcov_schwarzschild_GP x
-    | coords == Kerr_BL          = gcov_kerr_BL x
+gcov
+    | coords == Schwarzschild_GP = gcov_schwarzschild_GP
+    | coords == Kerr_BL          = gcov_kerr_BL
     | otherwise = error "Unknown coords!"
 
 gcon :: [Double] -> [[Double]]
-gcon x 
-    | coords == Schwarzschild_GP = gcon_schwarzschild_GP x
-    | coords == Kerr_BL          = gcon_kerr_BL x
+gcon 
+    | coords == Schwarzschild_GP = gcon_schwarzschild_GP
+    | coords == Kerr_BL          = gcon_kerr_BL
     | otherwise = error "Unknown coords!"
 
 conn :: [Double] -> [[[Double]]]
-conn x
-    | coords == Schwarzschild_GP = conn_schwarzschild_GP x
-    | coords == Kerr_BL          = conn_kerr_BL x
+conn
+    | coords == Schwarzschild_GP = conn_schwarzschild_GP
+    | coords == Kerr_BL          = conn_kerr_BL
     | otherwise = error "Unknown coords!"
 
 --------------------------------------------------------------------------------
@@ -422,8 +422,8 @@ step_geodesic_rk4 ph dl = phf where
     phf = Photon xp kp
 
 step_geodesic :: Photon -> Double -> Photon
-step_geodesic ph dl 
-    | integrator == RK4 = step_geodesic_rk4 ph dl
+step_geodesic 
+    | integrator == RK4 = step_geodesic_rk4
     | otherwise = error "Unknown integrator!"
 
 step_photon :: Photon -> Photon
@@ -462,7 +462,7 @@ photon_captured ph = (photon_r ph) <= rmin
 --------------------------------------------------------------------------------
 
 parmap :: (a -> b) -> [a] -> [b]
-parmap f = parmap' chunk_size f
+parmap = parmap' chunk_size
 
 parmap' :: Int -> (a -> b) -> [a] -> [b]
 parmap' chunk f = withStrategy (parListChunk chunk rseq) . map f
@@ -475,12 +475,12 @@ propagate_photon' n ph
     | otherwise = propagate_photon' (n+1) $ step_photon ph
 
 propagate_photon :: Photon -> Photon
-propagate_photon ph = propagate_photon' 0 ph
+propagate_photon = propagate_photon' 0
 
 propagate_photons :: [Photon] -> [Photon]
-propagate_photons phs 
-    | do_parallel = parmap propagate_photon phs
-    | otherwise   = map    propagate_photon phs
+propagate_photons 
+    | do_parallel = parmap propagate_photon
+    | otherwise   = map    propagate_photon
 
 --------------------------------------------------------------------------------
 
