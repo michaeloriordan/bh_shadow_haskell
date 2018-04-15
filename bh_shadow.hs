@@ -468,15 +468,18 @@ parmap' chunk f = withStrategy (parListChunk chunk rseq) . map f
 
 --------------------------------------------------------------------------------
 
-propagate_photon :: Int -> Photon -> Photon
-propagate_photon n ph 
+propagate_photon' :: Int -> Photon -> Photon
+propagate_photon' n ph 
     | photon_finished ph || n > nmax = ph
-    | otherwise = propagate_photon (n+1) $ step_photon ph
+    | otherwise = propagate_photon' (n+1) $ step_photon ph
+
+propagate_photon :: Photon -> Photon
+propagate_photon ph = propagate_photon' 0 ph
 
 propagate_photons :: [Photon] -> [Photon]
 propagate_photons phs 
-    | do_parallel = parmap (propagate_photon 0) phs
-    | otherwise   = map    (propagate_photon 0) phs
+    | do_parallel = parmap propagate_photon phs
+    | otherwise   = map    propagate_photon phs
 
 --------------------------------------------------------------------------------
 
