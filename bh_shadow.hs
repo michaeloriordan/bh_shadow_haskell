@@ -73,7 +73,7 @@ photon_phi ph = phi where
 photon_pos :: Photon -> (Double, Double, Double)
 photon_pos ph = (photon_r ph, photon_th ph, photon_phi ph)
 
-data Pixel = Pixel {pixel_xy :: (Double, Double)} deriving (Show)
+newtype Pixel = Pixel {pixel_xy :: (Double, Double)} deriving (Show)
 
 --------------------------------------------------------------------------------
 
