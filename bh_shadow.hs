@@ -54,9 +54,6 @@ do_parallel = False
 -- Divide tasks into chunks
 chunk_size = round $ (nx * ny) / 8
 
--- Parallel strategy 
-par_strat = rseq
-
 --------------------------------------------------------------------------------
 
 data Photon = Photon {photon_x, photon_k :: [Double]} deriving (Show)
@@ -464,10 +461,10 @@ photon_captured ph = (photon_r ph) <= rmin
 --------------------------------------------------------------------------------
 
 parmap :: (a -> b) -> [a] -> [b]
-parmap f = parmap' chunk_size par_strat f
+parmap f = parmap' chunk_size f
 
-parmap' :: Int -> Strategy b -> (a -> b) -> [a] -> [b]
-parmap' chunk strat f = withStrategy (parListChunk chunk strat) . map f
+parmap' :: Int -> (a -> b) -> [a] -> [b]
+parmap' chunk f = withStrategy (parListChunk chunk rseq) . map f
 
 --------------------------------------------------------------------------------
 
