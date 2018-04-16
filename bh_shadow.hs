@@ -7,6 +7,9 @@ import Control.Parallel.Strategies (Strategy,withStrategy,parListChunk,rpar)
 data Coords = Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
 data Integrator = RK4 deriving (Eq)
 
+coords_error     = error "Unknown coords!"
+integrator_error = error "Unknown integrator!"
+
 --------------------------------------------------------------------------------
 
 -- Camera distance and inclination
@@ -527,21 +530,21 @@ gcov
     | coords == Schwarzschild_GP = gcov_schwarzschild_GP
     | coords == Kerr_BL          = gcov_kerr_BL
     | coords == Kerr_KS          = gcov_kerr_KS
-    | otherwise                  = error "Unknown coords!"
+    | otherwise                  = coords_error
 
 gcon :: [Double] -> [[Double]]
 gcon 
     | coords == Schwarzschild_GP = gcon_schwarzschild_GP
     | coords == Kerr_BL          = gcon_kerr_BL
     | coords == Kerr_KS          = gcon_kerr_KS
-    | otherwise                  = error "Unknown coords!"
+    | otherwise                  = coords_error
 
 conn :: [Double] -> [[[Double]]]
 conn
     | coords == Schwarzschild_GP = conn_schwarzschild_GP
     | coords == Kerr_BL          = conn_kerr_BL
     | coords == Kerr_KS          = conn_kerr_KS
-    | otherwise                  = error "Unknown coords!"
+    | otherwise                  = coords_error
 
 --------------------------------------------------------------------------------
 
@@ -612,7 +615,7 @@ step_geodesic_rk4 ph dl = phf where
 step_geodesic :: Photon -> Double -> Photon
 step_geodesic 
     | integrator == RK4 = step_geodesic_rk4
-    | otherwise         = error "Unknown integrator!"
+    | otherwise         = integrator_error
 
 step_photon :: Photon -> Photon
 step_photon ph = phf where
@@ -627,7 +630,7 @@ bound_spherical ph
     | coords == Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
     | coords == Kerr_BL          = bound_spherical' (photon_x ph) (photon_k ph)
     | coords == Kerr_KS          = bound_spherical' (photon_x ph) (photon_k ph)
-    | otherwise                  = error "Unknown coords!"
+    | otherwise                  = coords_error
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
