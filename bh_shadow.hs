@@ -1,6 +1,6 @@
 import Data.List 
 import System.IO
-import Control.Parallel.Strategies (Strategy,withStrategy,parListChunk,rseq)
+import Control.Parallel.Strategies (Strategy,withStrategy,parListChunk,rpar)
 
 --------------------------------------------------------------------------------
 
@@ -654,7 +654,7 @@ parmap :: (a -> b) -> [a] -> [b]
 parmap = parmap' chunk_size
 
 parmap' :: Int -> (a -> b) -> [a] -> [b]
-parmap' chunk f = withStrategy (parListChunk chunk rseq) . map f
+parmap' chunk f = withStrategy (parListChunk chunk rpar) . map f
 
 map' :: (a -> b) -> [a] -> [b]
 map' = if do_parallel then parmap else map
