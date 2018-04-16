@@ -4,22 +4,22 @@ import Control.Parallel.Strategies (Strategy,withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
 
-data Coords = Schwarzschild_GP | Kerr_BL deriving (Eq)
+data Coords = Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
 data Integrator = RK4 deriving (Eq)
 
 --------------------------------------------------------------------------------
 
 -- Camera distance and inclination
 camera_r = 100
-camera_i = pi/2
+camera_i = 0
 
 -- Camera size
 cxlims = (-10, 10)
 cylims = (-10, 10)
 
 -- Number of pixels (photons)
-nx = 64
-ny = 64
+nx = 1024
+ny = 1024
 
 -- Initial k^0 component of photon momentum
 k0_init = 10.0
@@ -337,23 +337,208 @@ conn_kerr_BL (_:r:th:_) = c where
 
 --------------------------------------------------------------------------------
 
+gcov_kerr_KS :: [Double] -> [[Double]]
+gcov_kerr_KS (_:r:th:_) = g where
+    sigma = sigma_kerr r th
+    sth2 = (sin th)^2
+    a = spin
+    b = 2 * r / sigma
+
+    g00 = - (1 - b)
+    g11 = 1 + b
+    g22 = sigma
+    g33 = (sigma + a^2 * (1 + b) * sth2) * sth2
+    g01 = b
+    g10 = g01
+    g03 = - b * a * sth2
+    g30 = g03
+    g13 = - a * (1 + b) * sth2
+    g31 = g13
+
+    g = [[g00,g01,0,g03], [g10,g11,0,g13], [0,0,g22,0], [g30,g31,0,g33]]
+
+gcon_kerr_KS :: [Double] -> [[Double]]
+gcon_kerr_KS (_:r:th:_) = g where
+    sigma = sigma_kerr r th
+    delta = delta_kerr r
+    sth2 = (sin th)^2
+    a = spin
+    b = 2 * r / sigma
+
+    g00 = - (1 - b)
+    g11 = delta / sigma
+    g22 = 1 / sigma
+    g33 = 1 / (sigma * sth2)
+    g01 = b
+    g10 = g01
+    g13 = a / sigma
+    g31 = g13
+
+    g = [[g00,g01,0,0], [g10,g11,0,g13], [0,0,g22,0], [0,g31,0,g33]]
+
+conn_kerr_KS :: [Double] -> [[[Double]]]
+conn_kerr_KS (_:r:th:_) = c where
+    sigma = sigma_kerr r th
+    delta = delta_kerr r
+    b = 2 * r / sigma
+
+    cth = cos th
+    sth = sin th
+    sth2 = sth^2
+    cth2 = cth^2
+    sth3 = sth^3
+    c2th = cos (2 * th)
+    s2th = sin (2 * th)
+
+    cth4 = cth^4
+    sth4 = sth^4
+
+    cotth = cth / sth
+
+    a = spin
+    r2 = r^2
+    r3 = r^3
+    a2 = a^2
+    a3 = a^3
+    a4 = a^4
+
+    sigma_m = r2 - a2 * cth2
+
+    sigma2 = sigma^2
+    sigma3 = sigma^3
+
+    ----------------------------------------
+    
+    c000 = 2 * r * sigma_m / sigma3
+
+    c001 = sigma_m * (2 * r + sigma) / sigma3
+    c010 = c001
+
+    c011 = 2 * sigma_m * (r + sigma) / sigma3
+
+    c002 = - 2 * a2 * r * cth * sth / sigma2
+    c020 = c002
+
+    c012 = - 2 * a2 * r * cth * sth / sigma2
+    c021 = c012
+
+    c022 = - b * r
+
+    c003 = - 2 * a * r * sigma_m * sth2 / sigma3
+    c030 = c003
+
+    c013 = - a * sigma_m * (2 * r + sigma) * sth2 / sigma3
+    c031 = c013
+
+    c023 = 2 * a3 * r * cth * sth3 / sigma2
+    c032 = c023
+
+    c033 = 2 * r * sth2 * (-r * sigma2 + a2 * sigma_m * sth2) / sigma3
+
+    ---------------------------------------- 
+   
+    c100 = delta * sigma_m / sigma3
+
+    c101 = sigma_m * (-2 * r + a2 * sth2) / sigma3
+    c110 = c101
+
+    c111 = - sigma_m * (r * (2 + r) + a2 * c2th) / sigma3
+
+    c112 = - a2 * s2th / (a2 + 2 * r2 + a2 * c2th)
+    c121 = c112
+
+    c122 = - r * delta / sigma
+
+    c103 = - a * delta * sigma_m * sth2 / sigma3
+    c130 = c103
+
+    c113 = (a4 * r * cth4
+            + r2 * (2 * r + r3 - a2 * sth2)
+            + a2 * cth2 * (2 * r * (r2 - 1) + a2 * sth2))
+            * a * sth2 / sigma3
+    c131 = c113
+
+    c133 = - delta * sth2 * (r * sigma2 - a2 * sigma_m * sth2) / sigma3
+
+    ---------------------------------------- 
+
+    c200 = - 2 * a2 * r * cth * sth / sigma3
+
+    c210 = c200
+    c201 = c210
+
+    c211 = c200
+
+    c212 = r / sigma
+    c221 = c212
+
+    c222 = - a2 * cth * sth / sigma
+
+    c203 = a * r * (a2 + r2) * s2th / sigma3
+    c230 = c203
+
+    c213 = (r3 * (2 + r)
+            + a2 * (2 * r * (1 + r) * cth2 + a2 * cth4 + 2 * r * sth2))
+            * a * cth * sth / sigma3
+    c231 = c213
+
+    c233 = (-1 - (a2 * (3 * a2 * r + r3 * (4 + r) + a2 * (2 * r2 * cth2
+                 + a2 * cth4 + r * c2th)) * sth2) / sigma3) * cth * sth
+
+    ---------------------------------------- 
+
+    c300 = a * sigma_m / sigma3
+
+    c310 = c300
+    c301 = c310
+
+    c311 = c300
+
+    c302 = - 2 * a * r * cotth / sigma2
+    c320 = c302
+
+    c312 = - a * (2 * r + sigma) * cotth / sigma2
+    c321 = c312
+
+    c322 = - a * r / sigma
+
+    c303 = - a2 * sigma_m * sth2 / sigma3
+    c330 = c303
+
+    c313 = (r * sigma2 - a2 * sigma_m * sth2) / sigma3
+    c331 = c313
+
+    c323 = cotth + 4 * a2 * r * s2th / (a2 + 2 * r2 + a2 * c2th)^2
+    c332 = c323
+
+    c333 = (- a * r * sigma2 * sth2 + a3 * sigma_m * sth4) / sigma3
+
+    ---------------------------------------- 
+
+    c = [[[c000,c001,c002,c003], [c010,c011,c012,c013], [c020,c021,c022,c023], [c030,c031,c032,c033]],
+         [[c100,c101,0,c103], [c110,c111,c112,c113], [0,c121,c122,0], [c130,c131,0,c133]],
+         [[c200,c201,0,c203], [c210,c211,c212,c213], [0,c221,c222,0], [c230,c231,0,c233]],
+         [[c300,c301,c302,c303], [c310,c311,c312,c313], [c320,c321,c322,c323], [c330,c331,c332,c333]]]
+
+--------------------------------------------------------------------------------
+
 gcov :: [Double] -> [[Double]]
 gcov
     | coords == Schwarzschild_GP = gcov_schwarzschild_GP
     | coords == Kerr_BL          = gcov_kerr_BL
-    | otherwise = error "Unknown coords!"
+    | otherwise                  = error "Unknown coords!"
 
 gcon :: [Double] -> [[Double]]
 gcon 
     | coords == Schwarzschild_GP = gcon_schwarzschild_GP
     | coords == Kerr_BL          = gcon_kerr_BL
-    | otherwise = error "Unknown coords!"
+    | otherwise                  = error "Unknown coords!"
 
 conn :: [Double] -> [[[Double]]]
 conn
     | coords == Schwarzschild_GP = conn_schwarzschild_GP
     | coords == Kerr_BL          = conn_kerr_BL
-    | otherwise = error "Unknown coords!"
+    | otherwise                  = error "Unknown coords!"
 
 --------------------------------------------------------------------------------
 
@@ -424,7 +609,7 @@ step_geodesic_rk4 ph dl = phf where
 step_geodesic :: Photon -> Double -> Photon
 step_geodesic 
     | integrator == RK4 = step_geodesic_rk4
-    | otherwise = error "Unknown integrator!"
+    | otherwise         = error "Unknown integrator!"
 
 step_photon :: Photon -> Photon
 step_photon ph = phf where
@@ -438,7 +623,7 @@ bound_spherical :: Photon -> Photon
 bound_spherical ph 
     | coords == Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
     | coords == Kerr_BL          = bound_spherical' (photon_x ph) (photon_k ph)
-    | otherwise = error "Unknown coords!"
+    | otherwise                  = error "Unknown coords!"
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
@@ -467,6 +652,9 @@ parmap = parmap' chunk_size
 parmap' :: Int -> (a -> b) -> [a] -> [b]
 parmap' chunk f = withStrategy (parListChunk chunk rseq) . map f
 
+map' :: (a -> b) -> [a] -> [b]
+map' = if do_parallel then parmap else map
+
 --------------------------------------------------------------------------------
 
 propagate_photon' :: Int -> Photon -> Photon
@@ -478,9 +666,7 @@ propagate_photon :: Photon -> Photon
 propagate_photon = propagate_photon' 0
 
 propagate_photons :: [Photon] -> [Photon]
-propagate_photons 
-    | do_parallel = parmap propagate_photon
-    | otherwise   = map    propagate_photon
+propagate_photons = map' propagate_photon
 
 --------------------------------------------------------------------------------
 
