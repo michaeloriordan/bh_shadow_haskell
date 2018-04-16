@@ -31,7 +31,7 @@ coords = Kerr_BL
 spin = 0.9
 rh = 1 + sqrt (1 - spin^2)
 
--- Radius beyond which photons have "escaped"
+-- Radius beyond which photon has escaped
 rmax = camera_r + 10
 
 -- Integration method
@@ -40,7 +40,7 @@ integrator = RK4
 -- Stepsize parameter
 step_epsilon = 0.01
 
--- Max number of steps before photon "stuck"
+-- Max number of steps before photon considered stuck
 nmax = 100000
 
 -- Stop slightly outside horizon in Schwarzschild or Boyer-Lindquist coords
