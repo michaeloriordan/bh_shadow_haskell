@@ -526,18 +526,21 @@ gcov :: [Double] -> [[Double]]
 gcov
     | coords == Schwarzschild_GP = gcov_schwarzschild_GP
     | coords == Kerr_BL          = gcov_kerr_BL
+    | coords == Kerr_KS          = gcov_kerr_KS
     | otherwise                  = error "Unknown coords!"
 
 gcon :: [Double] -> [[Double]]
 gcon 
     | coords == Schwarzschild_GP = gcon_schwarzschild_GP
     | coords == Kerr_BL          = gcon_kerr_BL
+    | coords == Kerr_KS          = gcon_kerr_KS
     | otherwise                  = error "Unknown coords!"
 
 conn :: [Double] -> [[[Double]]]
 conn
     | coords == Schwarzschild_GP = conn_schwarzschild_GP
     | coords == Kerr_BL          = conn_kerr_BL
+    | coords == Kerr_KS          = conn_kerr_KS
     | otherwise                  = error "Unknown coords!"
 
 --------------------------------------------------------------------------------
@@ -623,6 +626,7 @@ bound_spherical :: Photon -> Photon
 bound_spherical ph 
     | coords == Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
     | coords == Kerr_BL          = bound_spherical' (photon_x ph) (photon_k ph)
+    | coords == Kerr_KS          = bound_spherical' (photon_x ph) (photon_k ph)
     | otherwise                  = error "Unknown coords!"
 
 -- Assumes x2 and x3 usual theta and phi
