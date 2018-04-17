@@ -1,6 +1,6 @@
 bh_shadow
-bh_shadow.hi
-bh_shadow.o
+*.hi
+*.o
 *.txt
 *.png
 *.gif
