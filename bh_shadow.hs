@@ -1,14 +1,11 @@
 import Data.List 
 import System.IO
-import Geometry as G
+import qualified Geometry as G
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
 
-data Coords = Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
 data Integrator = RK4 deriving (Eq)
-
-coords_error     = error "Unknown coords!"
 integrator_error = error "Unknown integrator!"
 
 --------------------------------------------------------------------------------
@@ -29,7 +26,7 @@ ny = 1024
 k0_init = 10.0
 
 -- Coordinate system
-coords = Kerr_KS
+coords = G.Kerr_KS
 
 -- Black hole spin
 spin = 0.9
@@ -49,8 +46,8 @@ nmax = 100000
 
 -- Stop slightly outside horizon in Schwarzschild or Boyer-Lindquist coords
 rmin
-    | coords == Kerr_BL = rh + 1.0e-6
-    | otherwise         = rh
+    | coords == G.Kerr_BL = rh + 1.0e-6
+    | otherwise           = rh
 
 -- Run code in parallel 
 do_parallel = True
@@ -121,25 +118,13 @@ init_photons = map $ init_photon k0_init camera_r camera_i
 --------------------------------------------------------------------------------
 
 gcov :: [Double] -> [[Double]]
-gcov
-    | coords == Schwarzschild_GP = G.gcov_schwarzschild_GP
-    | coords == Kerr_BL          = G.gcov_kerr_BL spin
-    | coords == Kerr_KS          = G.gcov_kerr_KS spin
-    | otherwise                  = coords_error
+gcov = G.gcov coords spin
 
 gcon :: [Double] -> [[Double]]
-gcon 
-    | coords == Schwarzschild_GP = G.gcon_schwarzschild_GP
-    | coords == Kerr_BL          = G.gcon_kerr_BL spin
-    | coords == Kerr_KS          = G.gcon_kerr_KS spin
-    | otherwise                  = coords_error
+gcon = G.gcon coords spin
 
 conn :: [Double] -> [[[Double]]]
-conn
-    | coords == Schwarzschild_GP = G.conn_schwarzschild_GP
-    | coords == Kerr_BL          = G.conn_kerr_BL spin
-    | coords == Kerr_KS          = G.conn_kerr_KS spin
-    | otherwise                  = coords_error
+conn = G.conn coords spin
 
 --------------------------------------------------------------------------------
 
@@ -157,8 +142,8 @@ dkdl x k = map (negate . dot2 k k) (conn x)
 
 stepsize :: [Double] -> [Double] -> Double
 stepsize x k
-    | coords == Kerr_BL = min (stepsize' x k) (stepsize'' x k)
-    | otherwise         = stepsize' x k
+    | coords == G.Kerr_BL = min (stepsize' x k) (stepsize'' x k)
+    | otherwise           = stepsize' x k
 
 stepsize' :: [Double] -> [Double] -> Double
 stepsize' (_:x1:_) (_:k1:k2:k3:_) = dl where
@@ -222,10 +207,10 @@ step_photon ph = phf where
 
 bound_spherical :: Photon -> Photon
 bound_spherical ph 
-    | coords == Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
-    | coords == Kerr_BL          = bound_spherical' (photon_x ph) (photon_k ph)
-    | coords == Kerr_KS          = bound_spherical' (photon_x ph) (photon_k ph)
-    | otherwise                  = coords_error
+    | coords == G.Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
+    | coords == G.Kerr_BL          = bound_spherical' (photon_x ph) (photon_k ph)
+    | coords == G.Kerr_KS          = bound_spherical' (photon_x ph) (photon_k ph)
+    | otherwise                    = G.coords_error
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)

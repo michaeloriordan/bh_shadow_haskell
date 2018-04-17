@@ -1,14 +1,40 @@
 module Geometry
-( gcov_schwarzschild_GP
-, gcon_schwarzschild_GP
-, conn_schwarzschild_GP
-, gcov_kerr_BL
-, gcon_kerr_BL
-, conn_kerr_BL
-, gcov_kerr_KS
-, gcon_kerr_KS
-, conn_kerr_KS
+( gcov
+, gcon
+, conn
+, Coords (..)
+, coords_error
 ) where
+
+--------------------------------------------------------------------------------
+
+data Coords = Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
+coords_error = error "Unknown coords!"
+
+--------------------------------------------------------------------------------
+
+gcov :: Coords -> Double -> [Double] -> [[Double]]
+gcov coords a
+    | coords == Schwarzschild_GP = gcov_schwarzschild_GP
+    | coords == Kerr_BL          = gcov_kerr_BL a
+    | coords == Kerr_KS          = gcov_kerr_KS a
+    | otherwise                  = coords_error
+
+gcon :: Coords -> Double -> [Double] -> [[Double]]
+gcon coords a
+    | coords == Schwarzschild_GP = gcon_schwarzschild_GP
+    | coords == Kerr_BL          = gcon_kerr_BL a
+    | coords == Kerr_KS          = gcon_kerr_KS a
+    | otherwise                  = coords_error
+
+conn :: Coords -> Double -> [Double] -> [[[Double]]]
+conn coords a
+    | coords == Schwarzschild_GP = conn_schwarzschild_GP
+    | coords == Kerr_BL          = conn_kerr_BL a
+    | coords == Kerr_KS          = conn_kerr_KS a
+    | otherwise                  = coords_error
+
+--------------------------------------------------------------------------------
 
 gcov_schwarzschild_GP :: [Double] -> [[Double]]
 gcov_schwarzschild_GP (_:r:th:_) = g where
