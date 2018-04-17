@@ -1,6 +1,6 @@
 import Data.List 
 import System.IO
-import Control.Parallel.Strategies (Strategy,withStrategy,parListChunk,rpar)
+import Control.Parallel.Strategies (Strategy,withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ integrator_error = error "Unknown integrator!"
 
 -- Camera distance and inclination
 camera_r = 100
-camera_i = 0
+camera_i = (pi / 180) * 15
 
 -- Camera size
 cxlims = (-10, 10)
@@ -28,7 +28,7 @@ ny = 1024
 k0_init = 10.0
 
 -- Coordinate system
-coords = Kerr_BL
+coords = Kerr_KS
 
 -- Black hole spin
 spin = 0.9
@@ -52,10 +52,10 @@ rmin
     | otherwise         = rh
 
 -- Run code in parallel 
-do_parallel = False
+do_parallel = True
 
 -- Divide tasks into chunks
-chunk_size = round $ (nx * ny) / 8
+chunk_size = 100
 
 --------------------------------------------------------------------------------
 
@@ -657,7 +657,7 @@ parmap :: (a -> b) -> [a] -> [b]
 parmap = parmap' chunk_size
 
 parmap' :: Int -> (a -> b) -> [a] -> [b]
-parmap' chunk f = withStrategy (parListChunk chunk rpar) . map f
+parmap' chunk f = withStrategy (parListChunk chunk rseq) . map f
 
 map' :: (a -> b) -> [a] -> [b]
 map' = if do_parallel then parmap else map

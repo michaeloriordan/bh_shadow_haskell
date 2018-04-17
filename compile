@@ -3,5 +3,5 @@
 rm bh_shadow
 rm bh_shadow.o
 
-ghc -o bh_shadow -O2 bh_shadow.hs
-#ghc -o bh_shadow -threaded -O2 bh_shadow.hs
+#ghc -o bh_shadow -O2 bh_shadow.hs
+ghc -o bh_shadow -threaded -O2 bh_shadow.hs
