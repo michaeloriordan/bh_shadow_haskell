@@ -14,7 +14,7 @@ integrator_error = error "Unknown integrator!"
 
 -- Camera distance and inclination
 camera_r = 100
-camera_i = (pi / 180) * 15
+camera_i = (pi / 180) * 75
 
 -- Camera size
 cxlims = (-10, 10)
@@ -55,7 +55,7 @@ rmin
 do_parallel = True
 
 -- Divide tasks into chunks
-chunk_size = 100
+chunk_size = 128
 
 --------------------------------------------------------------------------------
 
