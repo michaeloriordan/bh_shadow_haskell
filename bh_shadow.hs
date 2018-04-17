@@ -1,6 +1,6 @@
 import Data.List 
 import System.IO
-import Control.Parallel.Strategies (Strategy,withStrategy,parListChunk,rseq)
+import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
 
