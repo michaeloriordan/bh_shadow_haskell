@@ -30,8 +30,21 @@ def plot_shadow(filename, plotname, nx, ny):
     fig, ax = init_fig(xlabel='$x/r_g$', ylabel='$y/r_g$')
 
     dth = np.pi / 10
+    dphi = 2*np.pi / 20
     th_ring = np.remainder((th/dth).astype(int), 2)
-    status[np.logical_and(status == 0, th_ring == 0)] = 0.5
+    phi_ring = np.remainder((phi/dphi).astype(int), 2)
+    escaped_and_th_even = np.logical_and(status==1, th_ring==0) 
+    escaped_and_th_odd = np.logical_and(status==1, th_ring==1) 
+    escaped_and_phi_even = np.logical_and(status==1, phi_ring==0) 
+    escaped_and_phi_odd = np.logical_and(status==1, phi_ring==1) 
+    captured_and_th_even = np.logical_and(status==0, th_ring==0) 
+    captured_and_th_odd = np.logical_and(status==0, th_ring==1) 
+    captured_and_phi_even = np.logical_and(status==0, phi_ring==0) 
+    captured_and_phi_odd = np.logical_and(status==0, phi_ring==1) 
+    
+    status[captured_and_th_even] = 0.5
+    #status[np.logical_and(escaped_and_phi_even, escaped_and_th_even)] = 0.5
+    #status[np.logical_and(escaped_and_phi_odd, escaped_and_th_odd)] = 1.5
 
     ax.imshow(status.T, extent=[x.min(), x.max(), y.min(), y.max()], 
               cmap=plt.get_cmap('gray'), interpolation='none')
@@ -42,6 +55,6 @@ def plot_shadow(filename, plotname, nx, ny):
 if __name__ == '__main__':
     filename = 'data.txt'
     plotname = 'shadow'
-    nx = 256
-    ny = 256
+    nx = 1024
+    ny = 1024
     plot_shadow(filename, plotname, nx, ny)
