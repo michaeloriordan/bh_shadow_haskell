@@ -1,11 +1,11 @@
+import Vec_Def
 import Data.List 
 import System.IO
-import qualified Geometry as G
-import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
-import Vec_Def
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import qualified Geometry     as G
+import qualified Data.Text    as T
+import qualified Data.Text.IO as T
 import Data.Double.Conversion.Text (toShortest)
+import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
 
@@ -296,4 +296,4 @@ initial_photons = init_photons camera
 final_photons   = propagate_photons initial_photons
 
 main = do
-    TIO.writeFile "data.txt" $ data_to_save final_photons camera
+    T.writeFile "data.txt" $ data_to_save final_photons camera
