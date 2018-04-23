@@ -2,11 +2,17 @@ import Data.List
 import System.IO
 import qualified Geometry as G
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
+import Vec_Def
 
 --------------------------------------------------------------------------------
 
 data Integrator = RK4 deriving (Eq)
 integrator_error = error "Unknown integrator!"
+
+--------------------------------------------------------------------------------
+
+type Photons = [Photon]
+type Pixels = [Pixel]
 
 --------------------------------------------------------------------------------
 
@@ -57,7 +63,7 @@ chunk_size = 128
 
 --------------------------------------------------------------------------------
 
-data Photon = Photon {photon_x, photon_k :: [Double]} deriving (Show)
+data Photon = Photon {photon_x, photon_k :: Vec1} deriving (Show)
 
 photon_r :: Photon -> Double
 photon_r ph = r where
@@ -112,18 +118,18 @@ init_photon k0 cr ci pixel = Photon xi ki where
     xi = [0.0, r, th, phi]
     ki = [k0, k1, k2, k3]
 
-init_photons :: [Pixel] -> [Photon]
+init_photons :: Pixels -> Photons
 init_photons = map $ init_photon k0_init camera_r camera_i
 
 --------------------------------------------------------------------------------
 
-gcov :: [Double] -> [[Double]]
+gcov :: Vec1 -> Vec2 
 gcov = G.gcov coords spin
 
-gcon :: [Double] -> [[Double]]
+gcon :: Vec1 -> Vec2
 gcon = G.gcon coords spin
 
-conn :: [Double] -> [[[Double]]]
+conn :: Vec1 -> Vec3
 conn = G.conn coords spin
 
 --------------------------------------------------------------------------------
@@ -135,24 +141,24 @@ dot2 :: Num a => [a] -> [a] -> [[a]] -> a
 dot2 x y z = dot x $ map (dot y) z 
 
 -- Geodesic equation
-dkdl :: [Double] -> [Double] -> [Double] 
+dkdl :: Vec1 -> Vec1 -> Vec1
 dkdl x k = map (negate . dot2 k k) (conn x)
     
 --------------------------------------------------------------------------------
 
-stepsize :: [Double] -> [Double] -> Double
+stepsize :: Vec1 -> Vec1 -> Double
 stepsize x k
     | coords == G.Kerr_BL = min (stepsize' x k) (stepsize'' x k)
     | otherwise           = stepsize' x k
 
-stepsize' :: [Double] -> [Double] -> Double
+stepsize' :: Vec1 -> Vec1 -> Double
 stepsize' (_:x1:_) (_:k1:k2:k3:_) = dl where
     d1 = abs k1 / x1
     d2 = abs k2
     d3 = abs k3
     dl = step_epsilon / (d1 + d2 + d3)
 
-stepsize'' :: [Double] -> [Double] -> Double
+stepsize'' :: Vec1 -> Vec1 -> Double
 stepsize'' (_:x1:_) (_:k1:_) = dl where
     dl = (x1 - rh) / (2 * abs k1)
 
@@ -214,7 +220,7 @@ bound_spherical ph
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
-bound_spherical' :: [Double] -> [Double] -> Photon
+bound_spherical' :: Vec1 -> Vec1 -> Photon
 bound_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
     | x2 > pi   = Photon [x0, x1, 2*pi-x2, x3+pi] [k0, k1, -k2, k3]
     | x2 < 0    = Photon [x0, x1, -x2,     x3-pi] [k0, k1, -k2, k3]
@@ -252,7 +258,7 @@ propagate_photon' n ph
 propagate_photon :: Photon -> Photon
 propagate_photon = propagate_photon' 0
 
-propagate_photons :: [Photon] -> [Photon]
+propagate_photons :: Photons -> Photons
 propagate_photons = map' propagate_photon
 
 --------------------------------------------------------------------------------
@@ -267,7 +273,7 @@ photon_status ph
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
-data_to_save' :: [Photon] -> [Pixel] -> [[Double]]
+data_to_save' :: Photons -> Pixels -> Vec2
 data_to_save' phs pixels = data2save where
     positions = map photon_pos phs
     status    = map photon_status phs
@@ -275,10 +281,10 @@ data_to_save' phs pixels = data2save where
     data2save = [[x, y, r, th, phi, stat] 
                  | ((x,y), (r,th,phi), stat) <- zip3 pixels' positions status]
 
-data_to_string :: [[Double]] -> String
+data_to_string :: Vec2 -> String
 data_to_string d = unlines [unwords (map show di) | di <- d]
 
-data_to_save :: [Photon] -> [Pixel] -> String
+data_to_save :: Photons -> Pixels -> String
 data_to_save phs pixels = data_to_string $ data_to_save' phs pixels
 
 --------------------------------------------------------------------------------

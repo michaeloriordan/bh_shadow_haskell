@@ -6,6 +6,8 @@ module Geometry
 , coords_error
 ) where
 
+import Vec_Def
+
 --------------------------------------------------------------------------------
 
 data Coords = Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
@@ -13,21 +15,21 @@ coords_error = error "Unknown coords!"
 
 --------------------------------------------------------------------------------
 
-gcov :: Coords -> Double -> [Double] -> [[Double]]
+gcov :: Coords -> Double -> Vec1 -> Vec2 
 gcov coords a
     | coords == Schwarzschild_GP = gcov_schwarzschild_GP
     | coords == Kerr_BL          = gcov_kerr_BL a
     | coords == Kerr_KS          = gcov_kerr_KS a
     | otherwise                  = coords_error
 
-gcon :: Coords -> Double -> [Double] -> [[Double]]
+gcon :: Coords -> Double -> Vec1 -> Vec2 
 gcon coords a
     | coords == Schwarzschild_GP = gcon_schwarzschild_GP
     | coords == Kerr_BL          = gcon_kerr_BL a
     | coords == Kerr_KS          = gcon_kerr_KS a
     | otherwise                  = coords_error
 
-conn :: Coords -> Double -> [Double] -> [[[Double]]]
+conn :: Coords -> Double -> Vec1 -> Vec3
 conn coords a
     | coords == Schwarzschild_GP = conn_schwarzschild_GP
     | coords == Kerr_BL          = conn_kerr_BL a
@@ -36,7 +38,7 @@ conn coords a
 
 --------------------------------------------------------------------------------
 
-gcov_schwarzschild_GP :: [Double] -> [[Double]]
+gcov_schwarzschild_GP :: Vec1 -> Vec2 
 gcov_schwarzschild_GP (_:r:th:_) = g where
     r2 = r^2
     b = 1 - (2 / r)
@@ -51,7 +53,7 @@ gcov_schwarzschild_GP (_:r:th:_) = g where
 
     g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
 
-gcon_schwarzschild_GP :: [Double] -> [[Double]]
+gcon_schwarzschild_GP :: Vec1 -> Vec2 
 gcon_schwarzschild_GP (_:r:th:_) = g where
     r2 = r^2
     b = 1 - (2 / r)
@@ -66,7 +68,7 @@ gcon_schwarzschild_GP (_:r:th:_) = g where
 
     g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
 
-conn_schwarzschild_GP :: [Double] -> [[[Double]]]
+conn_schwarzschild_GP :: Vec1 -> Vec3 
 conn_schwarzschild_GP (_:r:th:_) = c where
     b = sqrt (2 / r)
     br = b * r
@@ -123,7 +125,7 @@ delta_kerr a r = r^2 - 2*r + a^2
 sigma_kerr :: Double -> Double -> Double -> Double
 sigma_kerr a r th = r^2 + (a^2) * (cos th)^2
 
-gcov_kerr_BL :: Double -> [Double] -> [[Double]]
+gcov_kerr_BL :: Double -> Vec1 -> Vec2
 gcov_kerr_BL a (_:r:th:_) = g where
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
@@ -141,7 +143,7 @@ gcov_kerr_BL a (_:r:th:_) = g where
 
     g = [[g00,0,0,g03], [0,g11,0,0], [0,0,g22,0], [g30,0,0,g33]]
 
-gcon_kerr_BL :: Double -> [Double] -> [[Double]]
+gcon_kerr_BL :: Double -> Vec1 -> Vec2
 gcon_kerr_BL a (_:r:th:_) = g where
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
@@ -160,7 +162,7 @@ gcon_kerr_BL a (_:r:th:_) = g where
 
     g = [[g00,0,0,g03], [0,g11,0,0], [0,0,g22,0], [g30,0,0,g33]]
 
-conn_kerr_BL :: Double -> [Double] -> [[[Double]]]
+conn_kerr_BL :: Double -> Vec1 -> Vec3
 conn_kerr_BL a (_:r:th:_) = c where
     delta = delta_kerr a r
     sigma = sigma_kerr a r th
@@ -254,7 +256,7 @@ conn_kerr_BL a (_:r:th:_) = c where
 
 --------------------------------------------------------------------------------
 
-gcov_kerr_KS :: Double -> [Double] -> [[Double]]
+gcov_kerr_KS :: Double -> Vec1 -> Vec2
 gcov_kerr_KS a (_:r:th:_) = g where
     sigma = sigma_kerr a r th
     sth2 = (sin th)^2
@@ -273,7 +275,7 @@ gcov_kerr_KS a (_:r:th:_) = g where
 
     g = [[g00,g01,0,g03], [g10,g11,0,g13], [0,0,g22,0], [g30,g31,0,g33]]
 
-gcon_kerr_KS :: Double -> [Double] -> [[Double]]
+gcon_kerr_KS :: Double -> Vec1 -> Vec2
 gcon_kerr_KS a (_:r:th:_) = g where
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
@@ -291,7 +293,7 @@ gcon_kerr_KS a (_:r:th:_) = g where
 
     g = [[g00,g01,0,0], [g10,g11,0,g13], [0,0,g22,0], [0,g31,0,g33]]
 
-conn_kerr_KS :: Double -> [Double] -> [[[Double]]]
+conn_kerr_KS :: Double -> Vec1 -> Vec3
 conn_kerr_KS a (_:r:th:_) = c where
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
