@@ -4,6 +4,7 @@ import qualified Geometry as G
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 import Vec_Def
 import qualified Data.Text as T
+import qualified Data.Text.IO as T_IO
 import Data.Double.Conversion.Text (toShortest)
 
 --------------------------------------------------------------------------------
@@ -283,14 +284,13 @@ data_to_save' phs pixels = data2save where
     data2save = [[x, y, r, th, phi, stat] 
                  | ((x,y), (r,th,phi), stat) <- zip3 pixels' positions status]
 
-data_to_string :: Vec2 -> String
-data_to_string d = unlines [unwords (map show di) | di <- d]
+--------------------------------------------------------------------------------
 
 data_to_text :: Vec2 -> T.Text
 data_to_text d = T.unlines [T.unwords (map toShortest di) | di <- d]
 
-data_to_save :: Photons -> Pixels -> String
-data_to_save phs pixels = data_to_string $ data_to_save' phs pixels
+data_to_save :: Photons -> Pixels -> T.Text
+data_to_save phs pixels = data_to_text $ data_to_save' phs pixels
 
 --------------------------------------------------------------------------------
 
@@ -299,4 +299,4 @@ initial_photons = init_photons camera_pixels
 final_photons   = propagate_photons initial_photons
 
 main = do
-    writeFile "data.txt" $ data_to_save final_photons camera_pixels
+    T_IO.writeFile "data.txt" $ data_to_save final_photons camera_pixels
