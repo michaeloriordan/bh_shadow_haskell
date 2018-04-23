@@ -3,3 +3,4 @@ bh_shadow
 *.o
 *.txt
 *.png
+bin/
