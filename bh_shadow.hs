@@ -3,6 +3,8 @@ import System.IO
 import qualified Geometry as G
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 import Vec_Def
+import qualified Data.Text as T
+import Data.Double.Conversion.Text (toShortest)
 
 --------------------------------------------------------------------------------
 
@@ -18,7 +20,7 @@ type Pixels = [Pixel]
 
 -- Camera distance and inclination
 camera_r = 100
-camera_i = (pi / 180) * 75
+camera_i = (pi / 180) * 0
 
 -- Camera size
 cxlims = (-10, 10)
@@ -283,6 +285,9 @@ data_to_save' phs pixels = data2save where
 
 data_to_string :: Vec2 -> String
 data_to_string d = unlines [unwords (map show di) | di <- d]
+
+data_to_text :: Vec2 -> T.Text
+data_to_text d = T.unlines [T.unwords (map toShortest di) | di <- d]
 
 data_to_save :: Photons -> Pixels -> String
 data_to_save phs pixels = data_to_string $ data_to_save' phs pixels
