@@ -169,20 +169,20 @@ step_geodesic_rk4 ph dl = phf where
     f1x = k
     f1k = dkdl x k
 
-    kt1 = [ki + (dl/2) * fi | (ki, fi) <- zip k f1k]
     xt1 = [xi + (dl/2) * fi | (xi, fi) <- zip x f1x]
+    kt1 = [ki + (dl/2) * fi | (ki, fi) <- zip k f1k]
 
     f2x = kt1
     f2k = dkdl xt1 kt1
 
-    kt2 = [ki + (dl/2) * fi | (ki, fi) <- zip k f2k]
     xt2 = [xi + (dl/2) * fi | (xi, fi) <- zip x f2x]
+    kt2 = [ki + (dl/2) * fi | (ki, fi) <- zip k f2k]
 
     f3x = kt2
     f3k = dkdl xt2 kt2
 
-    kt3 = [ki + dl * fi | (ki, fi) <- zip k f3k]
     xt3 = [xi + dl * fi | (xi, fi) <- zip x f3x]
+    kt3 = [ki + dl * fi | (ki, fi) <- zip k f3k]
 
     f4x = kt3
     f4k = dkdl xt3 kt3
