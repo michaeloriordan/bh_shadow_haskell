@@ -14,11 +14,6 @@ integrator_error = error "Unknown integrator!"
 
 --------------------------------------------------------------------------------
 
-type Photons = [Photon]
-type Pixels = [Pixel]
-
---------------------------------------------------------------------------------
-
 -- Camera distance and inclination
 camera_r = 100
 camera_i = (pi / 180) * 0
@@ -67,6 +62,7 @@ chunk_size = 128
 --------------------------------------------------------------------------------
 
 data Photon = Photon {photon_x, photon_k :: Vec1} deriving (Show)
+type Photons = [Photon]
 
 photon_r :: Photon -> Double
 photon_r ph = r where
@@ -84,6 +80,7 @@ photon_pos :: Photon -> (Double, Double, Double)
 photon_pos ph = (photon_r ph, photon_th ph, photon_phi ph)
 
 newtype Pixel = Pixel {pixel_xy :: (Double, Double)} deriving (Show)
+type Camera = [Pixel]
 
 --------------------------------------------------------------------------------
 
@@ -98,7 +95,7 @@ dy = (cymax - cymin) / (ny-1)
 cxs = [cxmin, cxmin+dx .. cxmax]
 cys = [cymin, cymin+dy .. cymax]
 
-init_pixels = [Pixel (x, y) | x <- cxs, y <- cys]
+init_camera = [Pixel (x, y) | x <- cxs, y <- cys]
 
 --------------------------------------------------------------------------------
 
@@ -121,7 +118,7 @@ init_photon k0 cr ci pixel = Photon xi ki where
     xi = [0.0, r, th, phi]
     ki = [k0, k1, k2, k3]
 
-init_photons :: Pixels -> Photons
+init_photons :: Camera -> Photons
 init_photons = map $ init_photon k0_init camera_r camera_i
 
 --------------------------------------------------------------------------------
@@ -276,27 +273,27 @@ photon_status ph
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
-data_to_save' :: Photons -> Pixels -> Vec2
-data_to_save' phs pixels = data2save where
+data_to_save' :: Photons -> Camera -> Vec2
+data_to_save' phs camera = data2save where
     positions = map photon_pos phs
     status    = map photon_status phs
-    pixels'   = map pixel_xy pixels
+    pixels    = map pixel_xy camera
     data2save = [[x, y, r, th, phi, stat] 
-                 | ((x,y), (r,th,phi), stat) <- zip3 pixels' positions status]
+                 | ((x,y), (r,th,phi), stat) <- zip3 pixels positions status]
 
 --------------------------------------------------------------------------------
 
 data_to_text :: Vec2 -> T.Text
 data_to_text d = T.unlines [T.unwords (map toShortest di) | di <- d]
 
-data_to_save :: Photons -> Pixels -> T.Text
-data_to_save phs pixels = data_to_text $ data_to_save' phs pixels
+data_to_save :: Photons -> Camera -> T.Text
+data_to_save phs camera = data_to_text $ data_to_save' phs camera
 
 --------------------------------------------------------------------------------
 
-camera_pixels   = init_pixels
-initial_photons = init_photons camera_pixels
+camera          = init_camera
+initial_photons = init_photons camera
 final_photons   = propagate_photons initial_photons
 
 main = do
-    TIO.writeFile "data.txt" $ data_to_save final_photons camera_pixels
+    TIO.writeFile "data.txt" $ data_to_save final_photons camera
