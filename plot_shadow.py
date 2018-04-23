@@ -43,18 +43,18 @@ def plot_shadow(filename, plotname, nx, ny):
     captured_and_phi_odd = np.logical_and(status==0, phi_ring==1) 
     
     status[captured_and_th_even] = 0.5
-    #status[np.logical_and(escaped_and_phi_even, escaped_and_th_even)] = 0.5
-    #status[np.logical_and(escaped_and_phi_odd, escaped_and_th_odd)] = 1.5
+    #status[escaped_and_phi_even * escaped_and_th_even] = 0.5
+    #status[escaped_and_phi_odd * escaped_and_th_odd] = 1.5
 
     ax.imshow(status.T, extent=[x.min(), x.max(), y.min(), y.max()], 
-              cmap=plt.get_cmap('gray'), interpolation='none')
+              cmap=plt.get_cmap('gray'), interpolation='bicubic')
 
     fig.savefig(plotname+'.png', format='png', dpi=300)
     plt.close(fig)
 
 if __name__ == '__main__':
-    filename = 'data.txt'
-    plotname = 'shadow'
+    filename = 'data/data_1024_a9ks_90_10.txt'
+    plotname = 'figures/shadow'
     nx = 1024
     ny = 1024
     plot_shadow(filename, plotname, nx, ny)
