@@ -7,4 +7,4 @@ Black hole ray-tracer for learning Haskell
 * Propagate photons in parallel on GPU
 
 ## Black Hole Shadow
-![alt text](https://github.com/michaeloriordan/bh_shadow_haskell/blob/master/shadow.gif)
+![alt text](https://github.com/michaeloriordan/bh_shadow_haskell/blob/master/figures/shadow.gif)
