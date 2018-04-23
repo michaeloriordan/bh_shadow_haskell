@@ -4,7 +4,7 @@ import qualified Geometry as G
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 import Vec_Def
 import qualified Data.Text as T
-import qualified Data.Text.IO as T_IO
+import qualified Data.Text.IO as TIO
 import Data.Double.Conversion.Text (toShortest)
 
 --------------------------------------------------------------------------------
@@ -299,4 +299,4 @@ initial_photons = init_photons camera_pixels
 final_photons   = propagate_photons initial_photons
 
 main = do
-    T_IO.writeFile "data.txt" $ data_to_save final_photons camera_pixels
+    TIO.writeFile "data.txt" $ data_to_save final_photons camera_pixels
