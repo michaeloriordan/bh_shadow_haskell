@@ -1,10 +1,7 @@
 import Vec_Def
 import Data.List 
 import System.IO
-import qualified Geometry     as G
---import qualified Data.Text    as T
---import qualified Data.Text.IO as T
---import Data.Double.Conversion.Text (toShortest)
+import qualified Geometry as G
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
@@ -283,12 +280,6 @@ data_to_save' phs camera = data2save where
 
 --------------------------------------------------------------------------------
 
---data_to_text :: Vec2 -> T.Text
---data_to_text d = T.unlines [T.unwords (map toShortest di) | di <- d]
-
---data_to_save :: Photons -> Camera -> T.Text
---data_to_save phs camera = data_to_text $ data_to_save' phs camera
-
 data_to_save :: Photons -> Camera -> String
 data_to_save phs camera = data_to_string $ data_to_save' phs camera
 
@@ -302,5 +293,4 @@ initial_photons = init_photons camera
 final_photons   = propagate_photons initial_photons
 
 main = do
-    --T.writeFile "data.txt" $ data_to_save final_photons camera
     writeFile "data.txt" $ data_to_save final_photons camera
