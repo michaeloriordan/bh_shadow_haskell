@@ -1,0 +1,191 @@
+#! /bin/bash
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_5 +RTS -N4
+mv data.txt data_1024_a9ks_5_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_10 +RTS -N4
+mv data.txt data_1024_a9ks_10_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_20 +RTS -N4
+mv data.txt data_1024_a9ks_20_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_25 +RTS -N4
+mv data.txt data_1024_a9ks_25_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_35 +RTS -N4
+mv data.txt data_1024_a9ks_35_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_40 +RTS -N4
+mv data.txt data_1024_a9ks_40_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_50 +RTS -N4
+mv data.txt data_1024_a9ks_50_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_55 +RTS -N4
+mv data.txt data_1024_a9ks_55_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_65 +RTS -N4
+mv data.txt data_1024_a9ks_65_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_70 +RTS -N4
+mv data.txt data_1024_a9ks_70_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_80 +RTS -N4
+mv data.txt data_1024_a9ks_80_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."
+
+########################################
+
+date
+date1=$(date +"%s")
+
+echo Calculating black hole shadow
+
+./bh_shadow_85 +RTS -N4
+mv data.txt data_1024_a9ks_85_10.txt
+
+date
+echo Finished
+date2=$(date +"%s")
+diff=$(($date2-$date1))
+echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds."

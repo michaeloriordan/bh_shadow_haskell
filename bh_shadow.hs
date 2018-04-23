@@ -275,10 +275,10 @@ data_to_save' phs pixels = data2save where
     data2save = [[x, y, r, th, phi, stat] 
                  | ((x,y), (r,th,phi), stat) <- zip3 pixels' positions status]
 
-data_to_string :: [[Double]] -> [Char]
+data_to_string :: [[Double]] -> String
 data_to_string d = unlines [unwords (map show di) | di <- d]
 
-data_to_save :: [Photon] -> [Pixel] -> [Char]
+data_to_save :: [Photon] -> [Pixel] -> String
 data_to_save phs pixels = data_to_string $ data_to_save' phs pixels
 
 --------------------------------------------------------------------------------
