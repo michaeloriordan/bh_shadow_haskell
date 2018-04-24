@@ -137,10 +137,10 @@ conn = G.conn coords spin
 
 --------------------------------------------------------------------------------
 
-dot :: Num a => [a] -> [a] -> a
+dot :: Vec1 -> Vec1 -> Double
 dot x y = sum $ zipWith (*) x y
 
-dot2 :: Num a => [a] -> [a] -> [[a]] -> a
+dot2 :: Vec1 -> Vec1 -> Vec2 -> Double
 dot2 x y z = dot x $ map (dot y) z 
 
 -- Geodesic equation
