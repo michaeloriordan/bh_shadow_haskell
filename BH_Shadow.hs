@@ -175,23 +175,23 @@ step_geodesic_rk4 ph dl = phf where
     dx1 = k
     dk1 = dkdl x k
 
-    xt1 = zipWith (\a b -> a + (dl/2)*b) x dx1 
-    kt1 = zipWith (\a b -> a + (dl/2)*b) k dk1 
+    x1 = zipWith (\a b -> a + (dl/2)*b) x dx1 
+    k1 = zipWith (\a b -> a + (dl/2)*b) k dk1 
 
-    dx2 = kt1
-    dk2 = dkdl xt1 kt1
+    dx2 = k1
+    dk2 = dkdl x1 k1
 
-    xt2 = zipWith (\a b -> a + (dl/2)*b) x dx2 
-    kt2 = zipWith (\a b -> a + (dl/2)*b) k dk2 
+    x2 = zipWith (\a b -> a + (dl/2)*b) x dx2 
+    k2 = zipWith (\a b -> a + (dl/2)*b) k dk2 
 
-    dx3 = kt2
-    dk3 = dkdl xt2 kt2
+    dx3 = k2
+    dk3 = dkdl x2 k2
 
-    xt3 = zipWith (\a b -> a + dl*b) x dx3 
-    kt3 = zipWith (\a b -> a + dl*b) k dk3 
+    x3 = zipWith (\a b -> a + dl*b) x dx3 
+    k3 = zipWith (\a b -> a + dl*b) k dk3 
 
-    dx4 = kt3
-    dk4 = dkdl xt3 kt3
+    dx4 = k3
+    dk4 = dkdl x3 k3
 
     dx = zipWith4 (\a b c d -> (dl/6) * (a + 2*b + 2*c + d)) dx1 dx2 dx3 dx4 
     dk = zipWith4 (\a b c d -> (dl/6) * (a + 2*b + 2*c + d)) dk1 dk2 dk3 dk4 
