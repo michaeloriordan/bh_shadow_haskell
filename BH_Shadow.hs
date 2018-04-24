@@ -193,8 +193,8 @@ step_geodesic_rk4 ph dl = phf where
     dx4 = kt3
     dk4 = dkdl xt3 kt3
 
-    dx = zipWith4 (\a b c d -> (dl/6) * (a + 2*(b + c) + d)) dx1 dx2 dx3 dx4 
-    dk = zipWith4 (\a b c d -> (dl/6) * (a + 2*(b + c) + d)) dk1 dk2 dk3 dk4 
+    dx = zipWith4 (\a b c d -> (dl/6) * (a + 2*b + 2*c + d)) dx1 dx2 dx3 dx4 
+    dk = zipWith4 (\a b c d -> (dl/6) * (a + 2*b + 2*c + d)) dk1 dk2 dk3 dk4 
 
     xf = zipWith (+) x dx
     kf = zipWith (+) k dk
