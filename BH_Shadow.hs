@@ -172,34 +172,34 @@ step_geodesic_rk4 ph dl = phf where
     x = photon_x ph
     k = photon_k ph
 
-    f1x = k
-    f1k = dkdl x k
+    dx1 = k
+    dk1 = dkdl x k
 
-    xt1 = zipWith (\a b -> a + (dl/2)*b) x f1x
-    kt1 = zipWith (\a b -> a + (dl/2)*b) k f1k
+    xt1 = zipWith (\a b -> a + (dl/2)*b) x dx1 
+    kt1 = zipWith (\a b -> a + (dl/2)*b) k dk1 
 
-    f2x = kt1
-    f2k = dkdl xt1 kt1
+    dx2 = kt1
+    dk2 = dkdl xt1 kt1
 
-    xt2 = zipWith (\a b -> a + (dl/2)*b) x f2x
-    kt2 = zipWith (\a b -> a + (dl/2)*b) k f2k
+    xt2 = zipWith (\a b -> a + (dl/2)*b) x dx2 
+    kt2 = zipWith (\a b -> a + (dl/2)*b) k dk2 
 
-    f3x = kt2
-    f3k = dkdl xt2 kt2
+    dx3 = kt2
+    dk3 = dkdl xt2 kt2
 
-    xt3 = zipWith (\a b -> a + dl*b) x f3x
-    kt3 = zipWith (\a b -> a + dl*b) k f3k
+    xt3 = zipWith (\a b -> a + dl*b) x dx3 
+    kt3 = zipWith (\a b -> a + dl*b) k dk3 
 
-    f4x = kt3
-    f4k = dkdl xt3 kt3
+    dx4 = kt3
+    dk4 = dkdl xt3 kt3
 
-    dx = zipWith4 (\a b c d -> (dl/6) * (a + 2*(b + c) + d)) f1x f2x f3x f4x
-    dk = zipWith4 (\a b c d -> (dl/6) * (a + 2*(b + c) + d)) f1k f2k f3k f4k
+    dx = zipWith4 (\a b c d -> (dl/6) * (a + 2*(b + c) + d)) dx1 dx2 dx3 dx4 
+    dk = zipWith4 (\a b c d -> (dl/6) * (a + 2*(b + c) + d)) dk1 dk2 dk3 dk4 
 
-    xp = zipWith (+) x dx
-    kp = zipWith (+) k dk
+    xf = zipWith (+) x dx
+    kf = zipWith (+) k dk
 
-    phf = Photon xp kp
+    phf = Photon xf kf
 
 step_geodesic :: Photon -> Double -> Photon
 step_geodesic 
