@@ -290,6 +290,6 @@ data_to_save :: Photons -> Camera -> String
 data_to_save phs camera = data_to_string $ data_to_save' phs camera
 
 data_to_string :: Vec2 -> String
-data_to_string d = unlines [unwords (map show di) | di <- d]
+data_to_string d = unlines $ map (unwords . map show) d
 
 --------------------------------------------------------------------------------
