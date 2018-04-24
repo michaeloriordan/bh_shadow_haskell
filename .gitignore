@@ -4,3 +4,4 @@ bh_shadow
 *.txt
 *.png
 bin/
+obj/
