@@ -21,10 +21,10 @@ data Photon = Photon
 
 photon_r :: Photon -> Scalar
 photon_r ph = r where
-    (r,_,_) = photon_pos ph
+    (r,_,_) = photon_position ph
 
-photon_pos :: Photon -> (Scalar, Scalar, Scalar)
-photon_pos ph = (r,th,phi) where
+photon_position :: Photon -> (Scalar, Scalar, Scalar)
+photon_position ph = (r,th,phi) where
     (_,r,th,phi) = components $ photon_x ph 
 
 type Photons = [Photon]
@@ -231,7 +231,7 @@ photon_status ph
 -- Status: escaped, captured, or stuck
 data_to_save' :: Photons -> Pixels -> Vec2
 data_to_save' phs pixels = data2save where
-    positions = map photon_pos phs
+    positions = map photon_position phs
     status    = map photon_status phs
     xys       = map pixel_xy pixels
     data2save = [[x, y, r, th, phi, stat] 
