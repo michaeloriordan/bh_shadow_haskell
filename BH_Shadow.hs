@@ -45,6 +45,11 @@ rh = 1 + sqrt (1 - spin^2)
 -- Radius beyond which photon has escaped
 rmax = distance camera + 10
 
+-- Stop slightly outside horizon in Schwarzschild or Boyer-Lindquist coords
+rmin = case coords of 
+    G.Kerr_BL -> rh + 1.0e-6
+    _         -> rh
+
 -- Integration method
 integrator = RK4
 
@@ -53,11 +58,6 @@ step_epsilon = 0.01
 
 -- Max number of steps before photon considered stuck
 nmax = 100000
-
--- Stop slightly outside horizon in Schwarzschild or Boyer-Lindquist coords
-rmin = case coords of 
-    G.Kerr_BL -> rh + 1.0e-6
-    _         -> rh
 
 -- Run code in parallel 
 do_parallel = True
