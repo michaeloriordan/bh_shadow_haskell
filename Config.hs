@@ -53,7 +53,7 @@ rmax = distance camera + 10
 -- Stop slightly outside horizon in Schwarzschild or Boyer-Lindquist coords
 rmin = case coords of 
     Kerr_BL -> rh + 1.0e-6
-    _         -> rh
+    _       -> rh
 
 -- Integration method
 integrator = RK4
