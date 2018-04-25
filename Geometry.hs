@@ -2,7 +2,7 @@ module Geometry
 ( gcov
 , gcon
 , conn
-, Coords (..)
+, Coords(..)
 ) where
 
 import Vec_Def
