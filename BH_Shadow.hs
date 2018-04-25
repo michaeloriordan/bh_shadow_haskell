@@ -91,7 +91,10 @@ type Photons = [Photon]
 
 --------------------------------------------------------------------------------
 
-newtype Pixel = Pixel {pixel_xy :: (Scalar, Scalar)} deriving (Show)
+newtype Pixel = Pixel 
+    { pixel_xy :: (Scalar, Scalar)
+    } deriving (Show)
+
 type Pixels = [Pixel]
 
 init_pixels :: Camera -> Pixels 
