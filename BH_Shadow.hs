@@ -104,7 +104,7 @@ stepsize x k = case coords of
 
 stepsize' :: Vec1 -> Vec1 -> Scalar
 stepsize' x k = dl where
-    (_,x1,_,_)   = components x
+    (_,x1, _, _) = components x
     (_,k1,k2,k3) = components k
     d1 = abs k1 / x1
     d2 = abs k2
