@@ -1,5 +1,6 @@
 module BH_Shadow
-( init_pixels
+( camera
+, init_pixels
 , init_photons
 , propagate_photons 
 , data_to_save
@@ -107,8 +108,6 @@ init_pixels camera =
         (xmin, xmax) = xlimits camera
         (ymin, ymax) = ylimits camera
         (nx, ny)     = xypixels camera
-
-pixels = init_pixels camera
 
 --------------------------------------------------------------------------------
 
