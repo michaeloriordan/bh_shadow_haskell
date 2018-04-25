@@ -231,9 +231,9 @@ photon_status ph
 -- Status: escaped, captured, or stuck
 data_to_save' :: Photons -> Pixels -> Vec2
 data_to_save' phs pixels = 
-    [[x, y, r, th, phi, stat] 
-    | ((x,y), (r,th,phi), stat) <- zip3 xys positions status]
-    where
+    [ [x, y, r, th, phi, stat] 
+    | ((x,y), (r,th,phi), stat) <- zip3 xys positions status
+    ] where
         positions = map photon_position phs
         status    = map photon_status phs
         xys       = map pixel_xy pixels
