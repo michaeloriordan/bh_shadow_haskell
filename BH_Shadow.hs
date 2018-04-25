@@ -100,7 +100,7 @@ dkdl x k = map (negate . dot2 k k) (conn x)
 stepsize :: Vec1 -> Vec1 -> Scalar
 stepsize x k = case coords of
     G.Kerr_BL -> min (stepsize' x k) (stepsize'' x k)
-            _ -> stepsize' x k
+    _         -> stepsize' x k
 
 stepsize' :: Vec1 -> Vec1 -> Scalar
 stepsize' x k = dl where
@@ -230,12 +230,13 @@ photon_status ph
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
 data_to_save' :: Photons -> Pixels -> Vec2
-data_to_save' phs pixels = data2save where
-    positions = map photon_position phs
-    status    = map photon_status phs
-    xys       = map pixel_xy pixels
-    data2save = [[x, y, r, th, phi, stat] 
-                 | ((x,y), (r,th,phi), stat) <- zip3 xys positions status]
+data_to_save' phs pixels = 
+    [[x, y, r, th, phi, stat] 
+    | ((x,y), (r,th,phi), stat) <- zip3 xys positions status]
+    where
+        positions = map photon_position phs
+        status    = map photon_status phs
+        xys       = map pixel_xy pixels
 
 --------------------------------------------------------------------------------
 
