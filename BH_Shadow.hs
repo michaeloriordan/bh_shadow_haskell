@@ -15,11 +15,11 @@ import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 data Integrator = RK4 deriving (Eq)
  
 data Camera = Camera
-    { distance     :: Scalar
-    , inclination  :: Scalar
-    , xlimits      :: (Scalar, Scalar)
-    , ylimits      :: (Scalar, Scalar)
-    , xypixels     :: (Int, Int)
+    { distance    :: Scalar
+    , inclination :: Scalar
+    , xlimits     :: (Scalar, Scalar)
+    , ylimits     :: (Scalar, Scalar)
+    , xypixels    :: (Int, Int)
     }
 
 --------------------------------------------------------------------------------
@@ -67,8 +67,10 @@ chunk_size = 128
 
 --------------------------------------------------------------------------------
 
-data Photon = Photon {photon_x, photon_k :: Vec1} deriving (Show)
-type Photons = [Photon]
+data Photon = Photon 
+    { photon_x :: Vec1
+    , photon_k :: Vec1
+    } deriving (Show)
 
 photon_r :: Photon -> Scalar
 photon_r ph = r where
@@ -84,6 +86,8 @@ photon_phi ph = phi where
 
 photon_pos :: Photon -> (Scalar, Scalar, Scalar)
 photon_pos ph = (photon_r ph, photon_th ph, photon_phi ph)
+
+type Photons = [Photon]
 
 --------------------------------------------------------------------------------
 
