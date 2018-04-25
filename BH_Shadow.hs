@@ -21,18 +21,11 @@ data Photon = Photon
 
 photon_r :: Photon -> Scalar
 photon_r ph = r where
-    (_:r:_) = photon_x ph
-
-photon_th :: Photon -> Scalar
-photon_th ph = th where
-    (_:_:th:_) = photon_x ph
-
-photon_phi :: Photon -> Scalar
-photon_phi ph = phi where
-    (_:_:_:phi:_) = photon_x ph
+    (r,_,_) = photon_pos ph
 
 photon_pos :: Photon -> (Scalar, Scalar, Scalar)
-photon_pos ph = (photon_r ph, photon_th ph, photon_phi ph)
+photon_pos ph = (r,th,phi) where
+    (_,r,th,phi) = components $ photon_x ph 
 
 type Photons = [Photon]
 
@@ -110,14 +103,18 @@ stepsize x k = case coords of
     _         -> stepsize' x k
 
 stepsize' :: Vec1 -> Vec1 -> Scalar
-stepsize' (_:x1:_) (_:k1:k2:k3:_) = dl where
+stepsize' x k = dl where
+    (_,x1,_,_)   = components x
+    (_,k1,k2,k3) = components k
     d1 = abs k1 / x1
     d2 = abs k2
     d3 = abs k3
     dl = step_epsilon / (d1 + d2 + d3)
 
 stepsize'' :: Vec1 -> Vec1 -> Scalar
-stepsize'' (_:x1:_) (_:k1:_) = dl where
+stepsize'' x k = dl where
+    (_,x1,_,_) = components x
+    (_,k1,_,_) = components k
     dl = (x1 - rh) / (2 * abs k1)
 
 --------------------------------------------------------------------------------
@@ -177,10 +174,13 @@ bound_spherical ph = case coords of
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
 bound_spherical' :: Vec1 -> Vec1 -> Photon
-bound_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
+bound_spherical' x k  
     | x2 > pi   = Photon [x0, x1, 2*pi-x2, x3+pi] [k0, k1, -k2, k3]
     | x2 < 0    = Photon [x0, x1,     -x2, x3-pi] [k0, k1, -k2, k3]
     | otherwise = Photon [x0, x1,      x2,    x3] [k0, k1,  k2, k3]
+    where
+        (x0,x1,x2,x3) = components x
+        (k0,k1,k2,k3) = components k
 
 --------------------------------------------------------------------------------
 

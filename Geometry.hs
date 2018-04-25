@@ -34,7 +34,8 @@ conn coords a = case coords of
 --------------------------------------------------------------------------------
 
 gcov_schwarzschild_GP :: Vec1 -> Vec2 
-gcov_schwarzschild_GP (_:r:th:_) = g where
+gcov_schwarzschild_GP x = g where
+    (_,r,th,_) = components x
     r2 = r^2
     b = 1 - (2 / r)
     sth2 = (sin th)^2
@@ -52,7 +53,8 @@ gcov_schwarzschild_GP (_:r:th:_) = g where
          [  0,   0,   0, g33]]
 
 gcon_schwarzschild_GP :: Vec1 -> Vec2 
-gcon_schwarzschild_GP (_:r:th:_) = g where
+gcon_schwarzschild_GP x = g where
+    (_,r,th,_) = components x
     r2 = r^2
     b = 1 - (2 / r)
     sth2 = (sin th)^2
@@ -70,7 +72,8 @@ gcon_schwarzschild_GP (_:r:th:_) = g where
          [  0,   0,   0, g33]]
 
 conn_schwarzschild_GP :: Vec1 -> Vec3 
-conn_schwarzschild_GP (_:r:th:_) = c where
+conn_schwarzschild_GP x = c where
+    (_,r,th,_) = components x
     b = sqrt (2 / r)
     br = b * r
     sth = sin th
@@ -127,7 +130,8 @@ sigma_kerr :: Scalar -> Scalar -> Scalar -> Scalar
 sigma_kerr a r th = r^2 + (a^2) * (cos th)^2
 
 gcov_kerr_BL :: Scalar -> Vec1 -> Vec2
-gcov_kerr_BL a (_:r:th:_) = g where
+gcov_kerr_BL a x = g where
+    (_,r,th,_) = components x
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
     sth2 = (sin th)^2
@@ -148,7 +152,8 @@ gcov_kerr_BL a (_:r:th:_) = g where
          [g30,   0,   0, g33]]
 
 gcon_kerr_BL :: Scalar -> Vec1 -> Vec2
-gcon_kerr_BL a (_:r:th:_) = g where
+gcon_kerr_BL a x = g where
+    (_,r,th,_) = components x
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
     sth2 = (sin th)^2
@@ -170,7 +175,8 @@ gcon_kerr_BL a (_:r:th:_) = g where
          [g30,   0,   0, g33]]
 
 conn_kerr_BL :: Scalar -> Vec1 -> Vec3
-conn_kerr_BL a (_:r:th:_) = c where
+conn_kerr_BL a x = c where
+    (_,r,th,_) = components x
     delta = delta_kerr a r
     sigma = sigma_kerr a r th
 
@@ -264,7 +270,8 @@ conn_kerr_BL a (_:r:th:_) = c where
 --------------------------------------------------------------------------------
 
 gcov_kerr_KS :: Scalar -> Vec1 -> Vec2
-gcov_kerr_KS a (_:r:th:_) = g where
+gcov_kerr_KS a x = g where
+    (_,r,th,_) = components x
     sigma = sigma_kerr a r th
     sth2 = (sin th)^2
     b = 2 * r / sigma
@@ -286,7 +293,8 @@ gcov_kerr_KS a (_:r:th:_) = g where
          [g30, g31,   0, g33]]
 
 gcon_kerr_KS :: Scalar -> Vec1 -> Vec2
-gcon_kerr_KS a (_:r:th:_) = g where
+gcon_kerr_KS a x = g where
+    (_,r,th,_) = components x
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
     sth2 = (sin th)^2
@@ -307,7 +315,8 @@ gcon_kerr_KS a (_:r:th:_) = g where
          [  0, g31,   0, g33]]
 
 conn_kerr_KS :: Scalar -> Vec1 -> Vec3
-conn_kerr_KS a (_:r:th:_) = c where
+conn_kerr_KS a x = c where
+    (_,r,th,_) = components x
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
     b = 2 * r / sigma
