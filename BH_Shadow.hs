@@ -223,8 +223,8 @@ bound_spherical ph = case coords of
 bound_spherical' :: Vec1 -> Vec1 -> Photon
 bound_spherical' (x0:x1:x2:x3:_) (k0:k1:k2:k3:_)
     | x2 > pi   = Photon [x0, x1, 2*pi-x2, x3+pi] [k0, k1, -k2, k3]
-    | x2 < 0    = Photon [x0, x1, -x2,     x3-pi] [k0, k1, -k2, k3]
-    | otherwise = Photon [x0, x1,  x2,     x3]    [k0, k1,  k2, k3]
+    | x2 < 0    = Photon [x0, x1,     -x2, x3-pi] [k0, k1, -k2, k3]
+    | otherwise = Photon [x0, x1,      x2,    x3] [k0, k1,  k2, k3]
 
 --------------------------------------------------------------------------------
 
