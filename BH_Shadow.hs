@@ -100,7 +100,7 @@ dkdl x k = map (negate . dot2 k k) (conn x)
 stepsize :: Vec1 -> Vec1 -> Scalar
 stepsize x k = case coords of
     G.Kerr_BL -> min (stepsize' x k) (stepsize'' x k)
-    _         -> stepsize' x k
+            _ -> stepsize' x k
 
 stepsize' :: Vec1 -> Vec1 -> Scalar
 stepsize' x k = dl where
