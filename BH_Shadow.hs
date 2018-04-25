@@ -13,7 +13,6 @@ import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 --------------------------------------------------------------------------------
 
 data Integrator = RK4 deriving (Eq)
-integrator_error = error "Unknown integrator!"
 
 --------------------------------------------------------------------------------
 
@@ -52,9 +51,9 @@ step_epsilon = 0.01
 nmax = 100000
 
 -- Stop slightly outside horizon in Schwarzschild or Boyer-Lindquist coords
-rmin
-    | coords == G.Kerr_BL = rh + 1.0e-6
-    | otherwise           = rh
+rmin = case coords of 
+    G.Kerr_BL -> rh + 1.0e-6
+    _         -> rh
 
 -- Run code in parallel 
 do_parallel = True
@@ -150,9 +149,9 @@ dkdl x k = map (negate . dot2 k k) (conn x)
 --------------------------------------------------------------------------------
 
 stepsize :: Vec1 -> Vec1 -> Double
-stepsize x k
-    | coords == G.Kerr_BL = min (stepsize' x k) (stepsize'' x k)
-    | otherwise           = stepsize' x k
+stepsize x k = case coords of
+    G.Kerr_BL -> min (stepsize' x k) (stepsize'' x k)
+    _         -> stepsize' x k
 
 stepsize' :: Vec1 -> Vec1 -> Double
 stepsize' (_:x1:_) (_:k1:k2:k3:_) = dl where
@@ -202,9 +201,8 @@ step_geodesic_rk4 ph dl = phf where
     phf = Photon xf kf
 
 step_geodesic :: Photon -> Double -> Photon
-step_geodesic 
-    | integrator == RK4 = step_geodesic_rk4
-    | otherwise         = integrator_error
+step_geodesic = case integrator of
+    RK4 -> step_geodesic_rk4
 
 step_photon :: Photon -> Photon
 step_photon ph = phf where
@@ -215,11 +213,10 @@ step_photon ph = phf where
 --------------------------------------------------------------------------------
 
 bound_spherical :: Photon -> Photon
-bound_spherical ph 
-    | coords == G.Schwarzschild_GP = bound_spherical' (photon_x ph) (photon_k ph)
-    | coords == G.Kerr_BL          = bound_spherical' (photon_x ph) (photon_k ph)
-    | coords == G.Kerr_KS          = bound_spherical' (photon_x ph) (photon_k ph)
-    | otherwise                    = G.coords_error
+bound_spherical ph = case coords of
+    G.Schwarzschild_GP -> bound_spherical' (photon_x ph) (photon_k ph)
+    G.Kerr_BL          -> bound_spherical' (photon_x ph) (photon_k ph)
+    G.Kerr_KS          -> bound_spherical' (photon_x ph) (photon_k ph)
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)

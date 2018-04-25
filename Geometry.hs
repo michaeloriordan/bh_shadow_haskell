@@ -3,7 +3,6 @@ module Geometry
 , gcon
 , conn
 , Coords (..)
-, coords_error
 ) where
 
 import Vec_Def
@@ -11,30 +10,26 @@ import Vec_Def
 --------------------------------------------------------------------------------
 
 data Coords = Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
-coords_error = error "Unknown coords!"
 
 --------------------------------------------------------------------------------
 
 gcov :: Coords -> Double -> Vec1 -> Vec2 
-gcov coords a
-    | coords == Schwarzschild_GP = gcov_schwarzschild_GP
-    | coords == Kerr_BL          = gcov_kerr_BL a
-    | coords == Kerr_KS          = gcov_kerr_KS a
-    | otherwise                  = coords_error
+gcov coords a = case coords of
+    Schwarzschild_GP -> gcov_schwarzschild_GP
+    Kerr_BL          -> gcov_kerr_BL a
+    Kerr_KS          -> gcov_kerr_KS a
 
 gcon :: Coords -> Double -> Vec1 -> Vec2 
-gcon coords a
-    | coords == Schwarzschild_GP = gcon_schwarzschild_GP
-    | coords == Kerr_BL          = gcon_kerr_BL a
-    | coords == Kerr_KS          = gcon_kerr_KS a
-    | otherwise                  = coords_error
+gcon coords a = case coords of
+    Schwarzschild_GP -> gcon_schwarzschild_GP
+    Kerr_BL          -> gcon_kerr_BL a
+    Kerr_KS          -> gcon_kerr_KS a
 
 conn :: Coords -> Double -> Vec1 -> Vec3
-conn coords a
-    | coords == Schwarzschild_GP = conn_schwarzschild_GP
-    | coords == Kerr_BL          = conn_kerr_BL a
-    | coords == Kerr_KS          = conn_kerr_KS a
-    | otherwise                  = coords_error
+conn coords a = case coords of
+    Schwarzschild_GP -> conn_schwarzschild_GP
+    Kerr_BL          -> conn_kerr_BL a
+    Kerr_KS          -> conn_kerr_KS a
 
 --------------------------------------------------------------------------------
 
@@ -51,7 +46,10 @@ gcov_schwarzschild_GP (_:r:th:_) = g where
     g01 = sqrt (2 / r)
     g10 = g01
 
-    g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
+    g = [[g00, g01,   0,   0],
+         [g10, g11,   0,   0],
+         [  0,   0, g22,   0],
+         [  0,   0,   0, g33]]
 
 gcon_schwarzschild_GP :: Vec1 -> Vec2 
 gcon_schwarzschild_GP (_:r:th:_) = g where
@@ -66,7 +64,10 @@ gcon_schwarzschild_GP (_:r:th:_) = g where
     g01 = sqrt (2 / r)
     g10 = g01
 
-    g = [[g00,g01,0,0], [g10,g11,0,0], [0,0,g22,0], [0,0,0,g33]]
+    g = [[g00, g01,   0,   0],
+         [g10, g11,   0,   0],
+         [  0,   0, g22,   0],
+         [  0,   0,   0, g33]]
 
 conn_schwarzschild_GP :: Vec1 -> Vec3 
 conn_schwarzschild_GP (_:r:th:_) = c where
@@ -112,10 +113,10 @@ conn_schwarzschild_GP (_:r:th:_) = c where
 
     ----------------------------------------  
 
-    c = [[[c000, c001, 0, 0], [c010, c011, 0, 0], [0, 0, c022, 0], [0, 0, 0, c033]],
-         [[c100, c101, 0, 0], [c110, c111, 0, 0], [0, 0, c122, 0], [0, 0, 0, c133]],
-         [[0, 0, 0, 0], [0, 0, c212, 0], [0, c221, 0, 0], [0, 0, 0, c233]],
-         [[0, 0, 0, 0], [0, 0, 0, c313], [0, 0, 0, c323], [0, c331, c332, 0]]]
+    c = [[[c000,c001,0,0], [c010,c011,   0,   0], [0,   0,c022,   0], [0,   0,   0,c033]],
+         [[c100,c101,0,0], [c110,c111,   0,   0], [0,   0,c122,   0], [0,   0,   0,c133]],
+         [[   0,   0,0,0], [   0,   0,c212,   0], [0,c221,   0,   0], [0,   0,   0,c233]],
+         [[   0,   0,0,0], [   0,   0,   0,c313], [0,   0,   0,c323], [0,c331,c332,   0]]]
 
 --------------------------------------------------------------------------------
 
@@ -141,7 +142,10 @@ gcov_kerr_BL a (_:r:th:_) = g where
     g03 = - b * a * sth2
     g30 = g03
 
-    g = [[g00,0,0,g03], [0,g11,0,0], [0,0,g22,0], [g30,0,0,g33]]
+    g = [[g00,   0,   0, g03], 
+         [  0, g11,   0,   0], 
+         [  0,   0, g22,   0], 
+         [g30,   0,   0, g33]]
 
 gcon_kerr_BL :: Double -> Vec1 -> Vec2
 gcon_kerr_BL a (_:r:th:_) = g where
@@ -160,7 +164,10 @@ gcon_kerr_BL a (_:r:th:_) = g where
     g03 = - 2 * a * r / (delta * sigma)
     g30 = g03
 
-    g = [[g00,0,0,g03], [0,g11,0,0], [0,0,g22,0], [g30,0,0,g33]]
+    g = [[g00,   0,   0, g03], 
+         [  0, g11,   0,   0], 
+         [  0,   0, g22,   0], 
+         [g30,   0,   0, g33]]
 
 conn_kerr_BL :: Double -> Vec1 -> Vec3
 conn_kerr_BL a (_:r:th:_) = c where
@@ -249,10 +256,10 @@ conn_kerr_BL a (_:r:th:_) = c where
 
     ----------------------------------------
     
-    c = [[[0,c001,c002,0], [c010,0,0,c013], [c020,0,0,c023], [0,c031,c032,0]],
-         [[c100,0,0,c103], [0,c111,c112,0], [0,c121,c122,0], [c130,0,0,c133]],
-         [[c200,0,0,c203], [0,c211,c212,0], [0,c221,c222,0], [c230,0,0,c233]],
-         [[0,c301,c302,0], [c310,0,0,c313], [c320,0,0,c323], [0,c331,c332,0]]]
+    c = [[[   0,c001,c002,   0], [c010,   0,   0,c013], [c020,   0,   0,c023], [   0,c031,c032,   0]],
+         [[c100,   0,   0,c103], [   0,c111,c112,   0], [   0,c121,c122,   0], [c130,   0,   0,c133]],
+         [[c200,   0,   0,c203], [   0,c211,c212,   0], [   0,c221,c222,   0], [c230,   0,   0,c233]],
+         [[   0,c301,c302,   0], [c310,   0,   0,c313], [c320,   0,   0,c323], [   0,c331,c332,   0]]]
 
 --------------------------------------------------------------------------------
 
@@ -273,7 +280,10 @@ gcov_kerr_KS a (_:r:th:_) = g where
     g13 = - a * (1 + b) * sth2
     g31 = g13
 
-    g = [[g00,g01,0,g03], [g10,g11,0,g13], [0,0,g22,0], [g30,g31,0,g33]]
+    g = [[g00, g01,   0, g03], 
+         [g10, g11,   0, g13], 
+         [  0,   0, g22,   0], 
+         [g30, g31,   0, g33]]
 
 gcon_kerr_KS :: Double -> Vec1 -> Vec2
 gcon_kerr_KS a (_:r:th:_) = g where
@@ -291,7 +301,10 @@ gcon_kerr_KS a (_:r:th:_) = g where
     g13 = a / sigma
     g31 = g13
 
-    g = [[g00,g01,0,0], [g10,g11,0,g13], [0,0,g22,0], [0,g31,0,g33]]
+    g = [[g00, g01,   0,   0], 
+         [g10, g11,   0, g13], 
+         [  0,   0, g22,   0], 
+         [  0, g31,   0, g33]]
 
 conn_kerr_KS :: Double -> Vec1 -> Vec3
 conn_kerr_KS a (_:r:th:_) = c where
@@ -432,6 +445,6 @@ conn_kerr_KS a (_:r:th:_) = c where
     ---------------------------------------- 
 
     c = [[[c000,c001,c002,c003], [c010,c011,c012,c013], [c020,c021,c022,c023], [c030,c031,c032,c033]],
-         [[c100,c101,0,c103], [c110,c111,c112,c113], [0,c121,c122,0], [c130,c131,0,c133]],
-         [[c200,c201,0,c203], [c210,c211,c212,c213], [0,c221,c222,0], [c230,c231,0,c233]],
+         [[c100,c101,   0,c103], [c110,c111,c112,c113], [   0,c121,c122,   0], [c130,c131,   0,c133]],
+         [[c200,c201,   0,c203], [c210,c211,c212,c213], [   0,c221,c222,   0], [c230,c231,   0,c233]],
          [[c300,c301,c302,c303], [c310,c311,c312,c313], [c320,c321,c322,c323], [c330,c331,c332,c333]]]
