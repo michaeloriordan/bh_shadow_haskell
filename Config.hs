@@ -18,6 +18,8 @@ module Config
 import Type_Defs
 import Geometry (Coords(..))
 
+--------------------------------------------------------------------------------
+
 data Integrator = RK4 deriving (Eq)
 
 data Camera = Camera
@@ -28,6 +30,8 @@ data Camera = Camera
     , xypixels    :: (Int, Int)
     }
 
+--------------------------------------------------------------------------------
+
 -- Set up camera far from BH
 camera = Camera
     { distance    = 100
@@ -37,15 +41,23 @@ camera = Camera
     , xypixels    = (1024, 1024)
     }
 
+--------------------------------------------------------------------------------
+
 -- Initial k^0 component of photon momentum
 k0_init = 10.0
+
+--------------------------------------------------------------------------------
 
 -- Coordinate system
 coords = Kerr_KS
 
+--------------------------------------------------------------------------------
+
 -- Black hole spin
 spin = 0.9
 rh = 1 + sqrt (1 - spin^2)
+
+--------------------------------------------------------------------------------
 
 -- Radius beyond which photon has escaped
 rmax = distance camera + 10
@@ -54,6 +66,8 @@ rmax = distance camera + 10
 rmin = case coords of 
     Kerr_BL -> rh + 1.0e-6
     _       -> rh
+
+--------------------------------------------------------------------------------
 
 -- Integration method
 integrator = RK4
@@ -64,8 +78,12 @@ step_epsilon = 0.01
 -- Max number of steps before photon considered stuck
 nmax = 100000 :: Int
 
+--------------------------------------------------------------------------------
+
 -- Run code in parallel 
 do_parallel = True
 
 -- Divide tasks into chunks
 chunk_size = 128 :: Int
+
+--------------------------------------------------------------------------------
