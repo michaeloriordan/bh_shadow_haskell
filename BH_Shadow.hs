@@ -66,22 +66,22 @@ chunk_size = 128
 data Photon = Photon {photon_x, photon_k :: Vec1} deriving (Show)
 type Photons = [Photon]
 
-photon_r :: Photon -> Double
+photon_r :: Photon -> Scalar
 photon_r ph = r where
     (_:r:_) = photon_x ph
 
-photon_th :: Photon -> Double
+photon_th :: Photon -> Scalar
 photon_th ph = th where
     (_:_:th:_) = photon_x ph
 
-photon_phi :: Photon -> Double
+photon_phi :: Photon -> Scalar
 photon_phi ph = phi where
     (_:_:_:phi:_) = photon_x ph
 
-photon_pos :: Photon -> (Double, Double, Double)
+photon_pos :: Photon -> (Scalar, Scalar, Scalar)
 photon_pos ph = (photon_r ph, photon_th ph, photon_phi ph)
 
-newtype Pixel = Pixel {pixel_xy :: (Double, Double)} deriving (Show)
+newtype Pixel = Pixel {pixel_xy :: (Scalar, Scalar)} deriving (Show)
 type Camera = [Pixel]
 
 --------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ init_camera = [Pixel (x, y) | x <- cxs, y <- cys]
 --------------------------------------------------------------------------------
 
 -- Assuming camera far from BH => flat space - Johannsen & Psaltis (2010)
-init_photon :: Double -> Double -> Double -> Pixel -> Photon
+init_photon :: Scalar -> Scalar -> Scalar -> Pixel -> Photon
 init_photon k0 cr ci pixel = Photon xi ki where
     (x, y) = pixel_xy pixel
     sini = sin ci
@@ -136,10 +136,10 @@ conn = G.conn coords spin
 
 --------------------------------------------------------------------------------
 
-dot :: Vec1 -> Vec1 -> Double
+dot :: Vec1 -> Vec1 -> Scalar
 dot x y = sum $ zipWith (*) x y
 
-dot2 :: Vec1 -> Vec1 -> Vec2 -> Double
+dot2 :: Vec1 -> Vec1 -> Vec2 -> Scalar
 dot2 x y z = dot x $ map (dot y) z 
 
 -- Geodesic equation
@@ -148,25 +148,25 @@ dkdl x k = map (negate . dot2 k k) (conn x)
     
 --------------------------------------------------------------------------------
 
-stepsize :: Vec1 -> Vec1 -> Double
+stepsize :: Vec1 -> Vec1 -> Scalar
 stepsize x k = case coords of
     G.Kerr_BL -> min (stepsize' x k) (stepsize'' x k)
     _         -> stepsize' x k
 
-stepsize' :: Vec1 -> Vec1 -> Double
+stepsize' :: Vec1 -> Vec1 -> Scalar
 stepsize' (_:x1:_) (_:k1:k2:k3:_) = dl where
     d1 = abs k1 / x1
     d2 = abs k2
     d3 = abs k3
     dl = step_epsilon / (d1 + d2 + d3)
 
-stepsize'' :: Vec1 -> Vec1 -> Double
+stepsize'' :: Vec1 -> Vec1 -> Scalar
 stepsize'' (_:x1:_) (_:k1:_) = dl where
     dl = (x1 - rh) / (2 * abs k1)
 
 --------------------------------------------------------------------------------
 
-step_geodesic_rk4 :: Photon -> Double -> Photon
+step_geodesic_rk4 :: Photon -> Scalar -> Photon
 step_geodesic_rk4 ph dl = phf where
     x = photon_x ph
     k = photon_k ph
@@ -200,7 +200,7 @@ step_geodesic_rk4 ph dl = phf where
 
     phf = Photon xf kf
 
-step_geodesic :: Photon -> Double -> Photon
+step_geodesic :: Photon -> Scalar -> Photon
 step_geodesic = case integrator of
     RK4 -> step_geodesic_rk4
 
@@ -263,7 +263,7 @@ propagate_photons = map' propagate_photon
 
 --------------------------------------------------------------------------------
 
-photon_status :: Photon -> Double
+photon_status :: Photon -> Scalar
 photon_status ph
     | photon_captured ph = 0
     | photon_escaped ph  = 1

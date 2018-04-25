@@ -13,19 +13,19 @@ data Coords = Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
 
 --------------------------------------------------------------------------------
 
-gcov :: Coords -> Double -> Vec1 -> Vec2 
+gcov :: Coords -> Scalar -> Vec1 -> Vec2 
 gcov coords a = case coords of
     Schwarzschild_GP -> gcov_schwarzschild_GP
     Kerr_BL          -> gcov_kerr_BL a
     Kerr_KS          -> gcov_kerr_KS a
 
-gcon :: Coords -> Double -> Vec1 -> Vec2 
+gcon :: Coords -> Scalar -> Vec1 -> Vec2 
 gcon coords a = case coords of
     Schwarzschild_GP -> gcon_schwarzschild_GP
     Kerr_BL          -> gcon_kerr_BL a
     Kerr_KS          -> gcon_kerr_KS a
 
-conn :: Coords -> Double -> Vec1 -> Vec3
+conn :: Coords -> Scalar -> Vec1 -> Vec3
 conn coords a = case coords of
     Schwarzschild_GP -> conn_schwarzschild_GP
     Kerr_BL          -> conn_kerr_BL a
@@ -120,13 +120,13 @@ conn_schwarzschild_GP (_:r:th:_) = c where
 
 --------------------------------------------------------------------------------
 
-delta_kerr :: Double -> Double -> Double
+delta_kerr :: Scalar -> Scalar -> Scalar
 delta_kerr a r = r^2 - 2*r + a^2
 
-sigma_kerr :: Double -> Double -> Double -> Double
+sigma_kerr :: Scalar -> Scalar -> Scalar -> Scalar
 sigma_kerr a r th = r^2 + (a^2) * (cos th)^2
 
-gcov_kerr_BL :: Double -> Vec1 -> Vec2
+gcov_kerr_BL :: Scalar -> Vec1 -> Vec2
 gcov_kerr_BL a (_:r:th:_) = g where
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
@@ -147,7 +147,7 @@ gcov_kerr_BL a (_:r:th:_) = g where
          [  0,   0, g22,   0], 
          [g30,   0,   0, g33]]
 
-gcon_kerr_BL :: Double -> Vec1 -> Vec2
+gcon_kerr_BL :: Scalar -> Vec1 -> Vec2
 gcon_kerr_BL a (_:r:th:_) = g where
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
@@ -169,7 +169,7 @@ gcon_kerr_BL a (_:r:th:_) = g where
          [  0,   0, g22,   0], 
          [g30,   0,   0, g33]]
 
-conn_kerr_BL :: Double -> Vec1 -> Vec3
+conn_kerr_BL :: Scalar -> Vec1 -> Vec3
 conn_kerr_BL a (_:r:th:_) = c where
     delta = delta_kerr a r
     sigma = sigma_kerr a r th
@@ -263,7 +263,7 @@ conn_kerr_BL a (_:r:th:_) = c where
 
 --------------------------------------------------------------------------------
 
-gcov_kerr_KS :: Double -> Vec1 -> Vec2
+gcov_kerr_KS :: Scalar -> Vec1 -> Vec2
 gcov_kerr_KS a (_:r:th:_) = g where
     sigma = sigma_kerr a r th
     sth2 = (sin th)^2
@@ -285,7 +285,7 @@ gcov_kerr_KS a (_:r:th:_) = g where
          [  0,   0, g22,   0], 
          [g30, g31,   0, g33]]
 
-gcon_kerr_KS :: Double -> Vec1 -> Vec2
+gcon_kerr_KS :: Scalar -> Vec1 -> Vec2
 gcon_kerr_KS a (_:r:th:_) = g where
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
@@ -306,7 +306,7 @@ gcon_kerr_KS a (_:r:th:_) = g where
          [  0,   0, g22,   0], 
          [  0, g31,   0, g33]]
 
-conn_kerr_KS :: Double -> Vec1 -> Vec3
+conn_kerr_KS :: Scalar -> Vec1 -> Vec3
 conn_kerr_KS a (_:r:th:_) = c where
     sigma = sigma_kerr a r th
     delta = delta_kerr a r
