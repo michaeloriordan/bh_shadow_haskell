@@ -1,5 +1,5 @@
 module BH_Shadow
-( init_camera
+( init_pixels
 , init_photons
 , propagate_photons 
 , data_to_save
@@ -13,20 +13,24 @@ import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 --------------------------------------------------------------------------------
 
 data Integrator = RK4 deriving (Eq)
+ 
+data Camera = Camera
+    { distance     :: Scalar
+    , inclination  :: Scalar
+    , xlimits      :: (Scalar, Scalar)
+    , ylimits      :: (Scalar, Scalar)
+    , xypixels     :: (Int, Int)
+    }
 
 --------------------------------------------------------------------------------
 
--- Camera distance and inclination
-camera_r = 100
-camera_i = (pi / 180) * 0
-
--- Camera size
-cxlims = (-10, 10)
-cylims = (-10, 10)
-
--- Number of pixels (photons)
-nx = 1024
-ny = 1024
+camera = Camera
+    { distance    = 100
+    , inclination = (pi / 180) * 0
+    , xlimits     = (-10,10)
+    , ylimits     = (-10,10)
+    , xypixels    = (1024, 1024)
+    }
 
 -- Initial k^0 component of photon momentum
 k0_init = 10.0
@@ -39,7 +43,7 @@ spin = 0.9
 rh = 1 + sqrt (1 - spin^2)
 
 -- Radius beyond which photon has escaped
-rmax = camera_r + 10
+rmax = distance camera + 10
 
 -- Integration method
 integrator = RK4
@@ -82,22 +86,22 @@ photon_pos :: Photon -> (Scalar, Scalar, Scalar)
 photon_pos ph = (photon_r ph, photon_th ph, photon_phi ph)
 
 newtype Pixel = Pixel {pixel_xy :: (Scalar, Scalar)} deriving (Show)
-type Camera = [Pixel]
+type Pixels = [Pixel]
 
 --------------------------------------------------------------------------------
 
-cxmin = fst cxlims
-cxmax = snd cxlims
-cymin = fst cylims
-cymax = snd cylims
+init_pixels :: Camera -> Pixels 
+init_pixels camera = 
+    [ Pixel (x, y)
+    | x <- linspace xmin xmax $ fromIntegral (nx-1)
+    , y <- linspace ymin ymax $ fromIntegral (ny-1)
+    ] where
+        linspace a b n = [a, a+(b-a)/n.. b]
+        (xmin, xmax) = xlimits camera
+        (ymin, ymax) = ylimits camera
+        (nx, ny)     = xypixels camera
 
-dx = (cxmax - cxmin) / (nx-1)
-dy = (cymax - cymin) / (ny-1)
-
-cxs = [cxmin, cxmin+dx .. cxmax]
-cys = [cymin, cymin+dy .. cymax]
-
-init_camera = [Pixel (x, y) | x <- cxs, y <- cys]
+pixels = init_pixels camera
 
 --------------------------------------------------------------------------------
 
@@ -120,8 +124,8 @@ init_photon k0 cr ci pixel = Photon xi ki where
     xi = [0.0, r, th, phi]
     ki = [k0, k1, k2, k3]
 
-init_photons :: Camera -> Photons
-init_photons = map $ init_photon k0_init camera_r camera_i
+init_photons :: Pixels -> Photons
+init_photons = map $ init_photon k0_init (distance camera) (inclination camera)
 
 --------------------------------------------------------------------------------
 
@@ -273,18 +277,18 @@ photon_status ph
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
-data_to_save' :: Photons -> Camera -> Vec2
-data_to_save' phs camera = data2save where
+data_to_save' :: Photons -> Pixels -> Vec2
+data_to_save' phs pixels = data2save where
     positions = map photon_pos phs
     status    = map photon_status phs
-    pixels    = map pixel_xy camera
+    pixels'   = map pixel_xy pixels
     data2save = [[x, y, r, th, phi, stat] 
-                 | ((x,y), (r,th,phi), stat) <- zip3 pixels positions status]
+                 | ((x,y), (r,th,phi), stat) <- zip3 pixels' positions status]
 
 --------------------------------------------------------------------------------
 
-data_to_save :: Photons -> Camera -> String
-data_to_save phs camera = data_to_string $ data_to_save' phs camera
+data_to_save :: Photons -> Pixels -> String
+data_to_save phs pixels = data_to_string $ data_to_save' phs pixels
 
 data_to_string :: Vec2 -> String
 data_to_string d = unlines $ map (unwords . map show) d

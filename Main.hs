@@ -1,10 +1,9 @@
 import System.IO
-import BH_Shadow (init_camera, init_photons, propagate_photons, data_to_save)
+import BH_Shadow (pixels, init_photons, propagate_photons, data_to_save)
 
-camera          = init_camera
-initial_photons = init_photons camera
+initial_photons = init_photons pixels
 final_photons   = propagate_photons initial_photons
-results         = data_to_save final_photons camera
+results         = data_to_save final_photons pixels
 
 main = do
     writeFile "data.txt" results
