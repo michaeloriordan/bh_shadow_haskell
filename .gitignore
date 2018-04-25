@@ -1,4 +1,5 @@
 bh_shadow
+bh_shadow_run
 *.hi
 *.o
 *.txt

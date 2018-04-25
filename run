@@ -5,8 +5,11 @@ date1=$(date +"%s")
 
 echo Calculating black hole shadow
 
-#./bh_shadow 
-./bh_shadow +RTS -N4 #-s
+rm bh_shadow_run
+cp bh_shadow bh_shadow_run
+
+#./bh_shadow_run
+./bh_shadow_run +RTS -N4 #-s
 
 date
 echo Finished
