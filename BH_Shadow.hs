@@ -287,9 +287,9 @@ data_to_save' :: Photons -> Pixels -> Vec2
 data_to_save' phs pixels = data2save where
     positions = map photon_pos phs
     status    = map photon_status phs
-    pixels'   = map pixel_xy pixels
+    xys       = map pixel_xy pixels
     data2save = [[x, y, r, th, phi, stat] 
-                 | ((x,y), (r,th,phi), stat) <- zip3 pixels' positions status]
+                 | ((x,y), (r,th,phi), stat) <- zip3 xys positions status]
 
 --------------------------------------------------------------------------------
 
