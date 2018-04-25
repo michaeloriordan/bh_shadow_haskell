@@ -25,6 +25,7 @@ data Camera = Camera
 
 --------------------------------------------------------------------------------
 
+-- Set up camera far from BH
 camera = Camera
     { distance    = 100
     , inclination = (pi / 180) * 0
