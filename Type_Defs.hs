@@ -1,4 +1,4 @@
-module Vec_Def
+module Type_Defs
 ( Scalar 
 , Vec1
 , Vec2

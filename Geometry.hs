@@ -5,7 +5,7 @@ module Geometry
 , Coords(..)
 ) where
 
-import Vec_Def
+import Type_Defs
 
 --------------------------------------------------------------------------------
 

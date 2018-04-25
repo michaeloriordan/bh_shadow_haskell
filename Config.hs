@@ -15,7 +15,7 @@ module Config
 , chunk_size
 ) where
 
-import Vec_Def
+import Type_Defs
 import Geometry (Coords(..))
 
 data Integrator = RK4 deriving (Eq)

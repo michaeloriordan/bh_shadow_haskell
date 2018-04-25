@@ -7,7 +7,7 @@ module BH_Shadow
 ) where
 
 import Config
-import Vec_Def
+import Type_Defs
 import Data.List 
 import qualified Geometry as G
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
