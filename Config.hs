@@ -31,9 +31,9 @@ data Camera = Camera
 -- Set up camera far from BH
 camera = Camera
     { distance    = 100
-    , inclination = (pi / 180) * 0
-    , xlimits     = (-10,10)
-    , ylimits     = (-10,10)
+    , inclination = (pi/180) * 0
+    , xlimits     = (-10, 10)
+    , ylimits     = (-10, 10)
     , xypixels    = (1024, 1024)
     }
 
