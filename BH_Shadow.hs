@@ -85,10 +85,10 @@ photon_phi ph = phi where
 photon_pos :: Photon -> (Scalar, Scalar, Scalar)
 photon_pos ph = (photon_r ph, photon_th ph, photon_phi ph)
 
+--------------------------------------------------------------------------------
+
 newtype Pixel = Pixel {pixel_xy :: (Scalar, Scalar)} deriving (Show)
 type Pixels = [Pixel]
-
---------------------------------------------------------------------------------
 
 init_pixels :: Camera -> Pixels 
 init_pixels camera = 
