@@ -9,27 +9,107 @@ import Type_Defs
 
 --------------------------------------------------------------------------------
 
-data Coords = Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
+data Coords = Schwarzschild | Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
 
 --------------------------------------------------------------------------------
 
 gcov :: Coords -> Scalar -> Vec1 -> Vec2 
 gcov coords a = case coords of
+    Schwarzschild    -> gcov_schwarzschild
     Schwarzschild_GP -> gcov_schwarzschild_GP
     Kerr_BL          -> gcov_kerr_BL a
     Kerr_KS          -> gcov_kerr_KS a
 
 gcon :: Coords -> Scalar -> Vec1 -> Vec2 
 gcon coords a = case coords of
+    Schwarzschild    -> gcon_schwarzschild
     Schwarzschild_GP -> gcon_schwarzschild_GP
     Kerr_BL          -> gcon_kerr_BL a
     Kerr_KS          -> gcon_kerr_KS a
 
 conn :: Coords -> Scalar -> Vec1 -> Vec3
 conn coords a = case coords of
+    Schwarzschild    -> conn_schwarzschild
     Schwarzschild_GP -> conn_schwarzschild_GP
     Kerr_BL          -> conn_kerr_BL a
     Kerr_KS          -> conn_kerr_KS a
+
+--------------------------------------------------------------------------------
+
+gcov_schwarzschild :: Vec1 -> Vec2 
+gcov_schwarzschild x = g where
+    (_,r,th,_) = components x
+    r2 = r^2
+    b = 1 - (2 / r)
+    sth2 = (sin th)^2
+
+    g00 = -b
+    g11 = 1 / b
+    g22 = r2
+    g33 = r2 * sth2
+
+    g = [[g00,   0,   0,   0],
+         [  0, g11,   0,   0],
+         [  0,   0, g22,   0],
+         [  0,   0,   0, g33]]
+
+gcon_schwarzschild :: Vec1 -> Vec2 
+gcon_schwarzschild x = g where
+    (_,r,th,_) = components x
+    r2 = r^2
+    b = 1 - (2 / r)
+    sth2 = (sin th)^2
+
+    g00 = -1 / b
+    g11 = b
+    g22 = 1 / r2
+    g33 = 1 / (r2 * sth2)
+
+    g = [[g00,   0,   0,   0],
+         [  0, g11,   0,   0],
+         [  0,   0, g22,   0],
+         [  0,   0,   0, g33]]
+
+conn_schwarzschild :: Vec1 -> Vec3 
+conn_schwarzschild x = c where
+    (_,r,th,_) = components x
+    b = r - 2
+    sth = sin th
+    cth = cos th
+    sth2 = sth^2
+    r3 = r^3
+
+    ----------------------------------------
+
+    c010 = 1 / (r * b)
+    c001 = c010
+
+    ----------------------------------------
+
+    c100 = b / r3
+    c111 = -1 / (r * b)
+    c122 = -b
+    c133 = -b * sth2
+
+    ----------------------------------------
+
+    c221 = 1 / r
+    c233 = -cth * sth
+    c212 = c221
+
+    ----------------------------------------
+
+    c331 = 1 / r
+    c332 = cth / sth;
+    c313 = c331 
+    c323 = c332 
+
+    ----------------------------------------
+    
+    c = [[[   0,c001,0,0], [c010,   0,   0,   0], [0,   0,   0,   0], [0,   0,   0,   0]],
+         [[c100,   0,0,0], [   0,c111,   0,   0], [0,   0,c122,   0], [0,   0,   0,c133]],
+         [[   0,   0,0,0], [   0,   0,c212,   0], [0,c221,   0,   0], [0,   0,   0,c233]],
+         [[   0,   0,0,0], [   0,   0,   0,c313], [0,   0,   0,c323], [0,c331,c332,   0]]]
 
 --------------------------------------------------------------------------------
 
