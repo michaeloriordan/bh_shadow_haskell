@@ -1,5 +1,7 @@
 import System.IO
-import BH_Shadow (camera, init_pixels, init_photons, propagate_photons, data_to_save)
+import Config (camera)
+import Camera (init_pixels)
+import BH_Shadow (init_photons, propagate_photons, data_to_save)
 
 pixels          = init_pixels camera
 initial_photons = init_photons pixels

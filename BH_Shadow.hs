@@ -1,53 +1,17 @@
 module BH_Shadow
-( camera
-, init_pixels
-, init_photons
+( init_photons
 , propagate_photons 
 , data_to_save
 ) where
 
 import Config
+import Photon
+import Camera
 import Type_Defs
 import Data.List 
 import Geometry (conn)
 import Geodesic_Equation (dkdl)
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
-
---------------------------------------------------------------------------------
-
-data Photon = Photon 
-    { photon_x :: Vec1
-    , photon_k :: Vec1
-    } deriving (Show)
-
-photon_r :: Photon -> Scalar
-photon_r ph = r where
-    (r,_,_) = photon_position ph
-
-photon_position :: Photon -> (Scalar, Scalar, Scalar)
-photon_position ph = (r,th,phi) where
-    (_,r,th,phi) = components $ photon_x ph 
-
-type Photons = [Photon]
-
---------------------------------------------------------------------------------
-
-newtype Pixel = Pixel 
-    { pixel_xy :: (Scalar, Scalar)
-    } deriving (Show)
-
-type Pixels = [Pixel]
-
-init_pixels :: Camera -> Pixels 
-init_pixels camera = 
-    [ Pixel (x, y)
-    | x <- linspace xmin xmax $ fromIntegral (nx-1)
-    , y <- linspace ymin ymax $ fromIntegral (ny-1)
-    ] where
-        linspace a b n = [a, a+(b-a)/n.. b]
-        (xmin, xmax) = xlimits camera
-        (ymin, ymax) = ylimits camera
-        (nx, ny)     = xypixels camera
 
 --------------------------------------------------------------------------------
 

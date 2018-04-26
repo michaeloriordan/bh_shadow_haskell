@@ -14,6 +14,7 @@ module Config
 ) where
 
 import Type_Defs
+import Camera
 
 --------------------------------------------------------------------------------
 

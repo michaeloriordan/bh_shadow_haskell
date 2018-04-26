@@ -6,7 +6,6 @@ module Type_Defs
 , components
 , Integrator(..)
 , Coords(..)
-, Camera(..)
 ) where
 
 --------------------------------------------------------------------------------
@@ -27,15 +26,5 @@ data Integrator = RK4 | VVerlet deriving (Eq)
 --------------------------------------------------------------------------------
 
 data Coords = Schwarzschild | Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
-
---------------------------------------------------------------------------------
-
-data Camera = Camera
-    { distance    :: Scalar
-    , inclination :: Scalar
-    , xlimits     :: (Scalar, Scalar)
-    , ylimits     :: (Scalar, Scalar)
-    , xypixels    :: (Int, Int)
-    }
 
 --------------------------------------------------------------------------------
