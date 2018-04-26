@@ -13,33 +13,9 @@ import Propagate_Photons (propagate_photons, photon_escaped, photon_captured)
 calculate_shadow :: Camera -> Vec2
 calculate_shadow camera = results where
     pixels          = init_pixels camera
-    initial_photons = init_photons pixels
+    initial_photons = init_photons k0_init camera pixels
     final_photons   = propagate_photons initial_photons
     results         = data_to_save final_photons pixels
-
---------------------------------------------------------------------------------
-
--- Assuming camera far from BH => flat space - Johannsen & Psaltis (2010)
-init_photon :: Scalar -> Scalar -> Scalar -> Pixel -> Photon
-init_photon k0 cr ci pixel = Photon xi ki where
-    (x, y) = pixel_xy pixel
-    sini = sin ci
-    cosi = cos ci
-
-    r = sqrt $ x^2 + y^2 + cr^2 
-    th = acos $ (y*sini + cr*cosi) / r
-    phi = atan2 x $ cr*sini - y*cosi
-
-    k1 = k0 * (-cr / r)
-    k2 = k0 * (cosi - (y*sini + cr*cosi) * (cr / r^2)) / 
-         (sqrt $ x^2 + (cr*sini - y*cosi)^2)
-    k3 = k0 * (x*sini) / (x^2 + (cr*sini - y*cosi)^2)
-
-    xi = [0.0, r, th, phi]
-    ki = [k0, k1, k2, k3]
-
-init_photons :: Pixels -> Photons
-init_photons = map $ init_photon k0_init (distance camera) (inclination camera)
 
 --------------------------------------------------------------------------------
 
