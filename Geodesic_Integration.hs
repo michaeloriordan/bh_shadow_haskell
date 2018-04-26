@@ -7,7 +7,7 @@ import Photon
 import Type_Defs
 import Data.List 
 import Geodesic_Equation (dkdl)
-import Config(coords, integrator, rh, step_epsilon)
+import Config (coords, integrator, rh, step_epsilon)
 
 --------------------------------------------------------------------------------
 
