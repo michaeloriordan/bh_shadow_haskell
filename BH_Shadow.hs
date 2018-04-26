@@ -161,20 +161,20 @@ step_photon :: Photon -> Photon
 step_photon ph = phf where
     dl = stepsize (photon_x ph) (photon_k ph)
     phh = step_geodesic ph dl
-    phf = bound_spherical phh
+    phf = bound_coords phh
 
 --------------------------------------------------------------------------------
 
-bound_spherical :: Photon -> Photon
-bound_spherical ph = case coords of
-    G.Schwarzschild_GP -> bound_spherical' (photon_x ph) (photon_k ph)
-    G.Kerr_BL          -> bound_spherical' (photon_x ph) (photon_k ph)
-    G.Kerr_KS          -> bound_spherical' (photon_x ph) (photon_k ph)
+bound_coords :: Photon -> Photon
+bound_coords ph = case coords of
+    G.Schwarzschild_GP -> bound_coords' (photon_x ph) (photon_k ph)
+    G.Kerr_BL          -> bound_coords' (photon_x ph) (photon_k ph)
+    G.Kerr_KS          -> bound_coords' (photon_x ph) (photon_k ph)
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
-bound_spherical' :: Vec1 -> Vec1 -> Photon
-bound_spherical' x k  
+bound_coords' :: Vec1 -> Vec1 -> Photon
+bound_coords' x k  
     | x2 > pi   = Photon [x0, x1, 2*pi-x2, x3+pi] [k0, k1, -k2, k3]
     | x2 < 0    = Photon [x0, x1,     -x2, x3-pi] [k0, k1, -k2, k3]
     | otherwise = Photon [x0, x1,      x2,    x3] [k0, k1,  k2, k3]
