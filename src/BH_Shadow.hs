@@ -1,7 +1,5 @@
 module BH_Shadow
-( init_photons
-, propagate_photons 
-, data_to_save
+( calculate_shadow
 ) where
 
 import Config
@@ -12,6 +10,15 @@ import Geometry (conn)
 import Geodesic_Equation (dkdl)
 import Geodesic_Integration (step_geodesic, stepsize)
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
+
+--------------------------------------------------------------------------------
+
+calculate_shadow :: Camera -> String
+calculate_shadow camera = results where
+    pixels          = init_pixels camera
+    initial_photons = init_photons pixels
+    final_photons   = propagate_photons initial_photons
+    results         = data_to_save final_photons pixels
 
 --------------------------------------------------------------------------------
 
