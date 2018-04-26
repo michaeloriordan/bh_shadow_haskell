@@ -20,8 +20,9 @@ step_geodesic = case integrator of
 
 stepsize :: Vec1 -> Vec1 -> Scalar
 stepsize x k = case coords of
-    Kerr_BL -> min (stepsize' x k) (stepsize'' x k)
-    _       -> stepsize' x k
+    Schwarzschild -> min (stepsize' x k) (stepsize'' x k)
+    Kerr_BL       -> min (stepsize' x k) (stepsize'' x k)
+    _             -> stepsize' x k
 
 --------------------------------------------------------------------------------
 
