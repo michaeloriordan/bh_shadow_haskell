@@ -160,8 +160,8 @@ step_geodesic_vverlet ph dl = phf where
     dk1 = dkdl x k
 
     xf = zipWith3 (\a b c -> a + dl*b + ((dl^2)/2)*c) x k dk1 
-    kt = zipWith (\a b -> a + dl*b) k dk1 -- Estimate k for dkdl
-    dk2 = dkdl xf kt
+    k1 = zipWith (\a b -> a + dl*b) k dk1 -- Estimate k for dkdl
+    dk2 = dkdl xf k1
 
     kf = zipWith3 (\a b c -> a + (dl/2)*(b + c)) k dk1 dk2 
 
