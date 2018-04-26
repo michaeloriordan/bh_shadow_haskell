@@ -1,11 +1,11 @@
 #! /bin/bash
 
 rm bh_shadow
-rm *.o
+rm src/*.o
 mkdir -p obj
 
 #ghc -o bh_shadow -O2 Main.hs
-ghc -o bh_shadow -threaded -O2 Main.hs
+ghc -o bh_shadow -threaded -O2 -isrc src/Main.hs
 
-mv *.o obj/
-mv *.hi obj/
+mv src/*.o obj/
+mv src/*.hi obj/
