@@ -13,7 +13,7 @@ import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
 
-calculate_shadow :: Camera -> String
+calculate_shadow :: Camera -> Vec2
 calculate_shadow camera = results where
     pixels          = init_pixels camera
     initial_photons = init_photons pixels
@@ -118,21 +118,13 @@ photon_status ph
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
-data_to_save' :: Photons -> Pixels -> Vec2
-data_to_save' phs pixels = 
+data_to_save :: Photons -> Pixels -> Vec2
+data_to_save phs pixels = 
     [ [x, y, r, th, phi, stat] 
     | ((x,y), (r,th,phi), stat) <- zip3 xys positions status
     ] where
         positions = map photon_position phs
         status    = map photon_status phs
         xys       = map pixel_xy pixels
-
---------------------------------------------------------------------------------
-
-data_to_save :: Photons -> Pixels -> String
-data_to_save phs pixels = data_to_string $ data_to_save' phs pixels
-
-data_to_string :: Vec2 -> String
-data_to_string d = unlines $ map (unwords . map show) d
 
 --------------------------------------------------------------------------------
