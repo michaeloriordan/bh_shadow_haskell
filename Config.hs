@@ -20,7 +20,7 @@ import Geometry (Coords(..))
 
 --------------------------------------------------------------------------------
 
-data Integrator = RK4 deriving (Eq)
+data Integrator = RK4 | VVerlet deriving (Eq)
 
 data Camera = Camera
     { distance    :: Scalar
@@ -70,7 +70,7 @@ rmin = case coords of
 --------------------------------------------------------------------------------
 
 -- Integration method
-integrator = RK4
+integrator = VVerlet
 
 -- Stepsize parameter
 step_epsilon = 0.01

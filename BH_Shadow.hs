@@ -153,9 +153,24 @@ step_geodesic_rk4 ph dl = phf where
 
     phf = Photon xf kf
 
+step_geodesic_vverlet :: Photon -> Scalar -> Photon
+step_geodesic_vverlet ph dl = phf where
+    x = photon_x ph
+    k = photon_k ph
+    dk1 = dkdl x k
+
+    xf = zipWith3 (\a b c -> a + dl*b + ((dl^2)/2)*c) x k dk1 
+    kt = zipWith (\a b -> a + dl*b) k dk1 
+    dk2 = dkdl xf kt
+
+    kf = zipWith3 (\a b c -> a + (dl/2)*(b + c)) k dk1 dk2 
+
+    phf = Photon xf kf
+
 step_geodesic :: Photon -> Scalar -> Photon
 step_geodesic = case integrator of
-    RK4 -> step_geodesic_rk4
+    RK4     -> step_geodesic_rk4
+    VVerlet -> step_geodesic_vverlet
 
 step_photon :: Photon -> Photon
 step_photon ph = phf where
