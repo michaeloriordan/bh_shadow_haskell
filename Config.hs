@@ -1,7 +1,5 @@
 module Config
-( Integrator(..)
-, Camera(..)
-, camera
+( camera
 , k0_init
 , coords
 , spin
@@ -16,19 +14,6 @@ module Config
 ) where
 
 import Type_Defs
-import Geometry (Coords(..))
-
---------------------------------------------------------------------------------
-
-data Integrator = RK4 | VVerlet deriving (Eq)
-
-data Camera = Camera
-    { distance    :: Scalar
-    , inclination :: Scalar
-    , xlimits     :: (Scalar, Scalar)
-    , ylimits     :: (Scalar, Scalar)
-    , xypixels    :: (Int, Int)
-    }
 
 --------------------------------------------------------------------------------
 

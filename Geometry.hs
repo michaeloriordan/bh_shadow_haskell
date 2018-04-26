@@ -2,33 +2,40 @@ module Geometry
 ( gcov
 , gcon
 , conn
-, Coords(..)
 ) where
 
 import Type_Defs
+import Config (coords, spin)
 
 --------------------------------------------------------------------------------
 
-data Coords = Schwarzschild | Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
+gcov :: Vec1 -> Vec2 
+gcov = gcov' coords spin
+
+gcon :: Vec1 -> Vec2
+gcon = gcon' coords spin
+
+conn :: Vec1 -> Vec3
+conn = conn' coords spin
 
 --------------------------------------------------------------------------------
 
-gcov :: Coords -> Scalar -> Vec1 -> Vec2 
-gcov coords a = case coords of
+gcov' :: Coords -> Scalar -> Vec1 -> Vec2 
+gcov' coords a = case coords of
     Schwarzschild    -> gcov_schwarzschild
     Schwarzschild_GP -> gcov_schwarzschild_GP
     Kerr_BL          -> gcov_kerr_BL a
     Kerr_KS          -> gcov_kerr_KS a
 
-gcon :: Coords -> Scalar -> Vec1 -> Vec2 
-gcon coords a = case coords of
+gcon' :: Coords -> Scalar -> Vec1 -> Vec2 
+gcon' coords a = case coords of
     Schwarzschild    -> gcon_schwarzschild
     Schwarzschild_GP -> gcon_schwarzschild_GP
     Kerr_BL          -> gcon_kerr_BL a
     Kerr_KS          -> gcon_kerr_KS a
 
-conn :: Coords -> Scalar -> Vec1 -> Vec3
-conn coords a = case coords of
+conn' :: Coords -> Scalar -> Vec1 -> Vec3
+conn' coords a = case coords of
     Schwarzschild    -> conn_schwarzschild
     Schwarzschild_GP -> conn_schwarzschild_GP
     Kerr_BL          -> conn_kerr_BL a

@@ -9,7 +9,8 @@ module BH_Shadow
 import Config
 import Type_Defs
 import Data.List 
-import qualified Geometry as G
+import Geometry (conn)
+import Geodesic_Equation (dkdl)
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
@@ -74,33 +75,10 @@ init_photons = map $ init_photon k0_init (distance camera) (inclination camera)
 
 --------------------------------------------------------------------------------
 
-gcov :: Vec1 -> Vec2 
-gcov = G.gcov coords spin
-
-gcon :: Vec1 -> Vec2
-gcon = G.gcon coords spin
-
-conn :: Vec1 -> Vec3
-conn = G.conn coords spin
-
---------------------------------------------------------------------------------
-
-dot :: Vec1 -> Vec1 -> Scalar
-dot x y = sum $ zipWith (*) x y
-
-dot2 :: Vec1 -> Vec1 -> Vec2 -> Scalar
-dot2 x y z = dot x $ map (dot y) z 
-
--- Geodesic equation
-dkdl :: Vec1 -> Vec1 -> Vec1
-dkdl x k = map (negate . dot2 k k) (conn x)
-    
---------------------------------------------------------------------------------
-
 stepsize :: Vec1 -> Vec1 -> Scalar
 stepsize x k = case coords of
-    G.Kerr_BL -> min (stepsize' x k) (stepsize'' x k)
-    _         -> stepsize' x k
+    Kerr_BL -> min (stepsize' x k) (stepsize'' x k)
+    _       -> stepsize' x k
 
 stepsize' :: Vec1 -> Vec1 -> Scalar
 stepsize' x k = dl where
@@ -184,9 +162,9 @@ step_photon ph = phf where
 
 bound_coords :: Photon -> Photon
 bound_coords ph = case coords of
-    G.Schwarzschild_GP -> bound_coords' (photon_x ph) (photon_k ph)
-    G.Kerr_BL          -> bound_coords' (photon_x ph) (photon_k ph)
-    G.Kerr_KS          -> bound_coords' (photon_x ph) (photon_k ph)
+    Schwarzschild_GP -> bound_coords' (photon_x ph) (photon_k ph)
+    Kerr_BL          -> bound_coords' (photon_x ph) (photon_k ph)
+    Kerr_KS          -> bound_coords' (photon_x ph) (photon_k ph)
 
 -- Assumes x2 and x3 usual theta and phi
 -- Force theta to stay in the domain [0, pi] - Chan et al. (2013)
