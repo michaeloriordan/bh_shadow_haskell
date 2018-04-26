@@ -41,8 +41,10 @@ init_pixels camera =
 --------------------------------------------------------------------------------
 
 ---- Assuming camera far from BH => flat space - Johannsen & Psaltis (2010)
-init_photon :: Scalar -> Scalar -> Scalar -> Pixel -> Photon
-init_photon k0 cr ci pixel = Photon xi ki where
+init_photon :: Scalar -> Camera -> Pixel -> Photon
+init_photon k0 camera pixel = Photon xi ki where
+    cr = distance camera
+    ci = inclination camera
     (x, y) = pixel_xy pixel
     sini = sin ci
     cosi = cos ci
@@ -60,8 +62,6 @@ init_photon k0 cr ci pixel = Photon xi ki where
     ki = [k0, k1, k2, k3]
 
 init_photons :: Scalar -> Camera -> Pixels -> Photons
-init_photons k0 camera pixels = map (init_photon k0 cr ci) pixels where
-    cr = distance camera
-    ci = inclination camera
+init_photons k0 camera = map $ init_photon k0 camera
 
 --------------------------------------------------------------------------------
