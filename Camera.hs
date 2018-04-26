@@ -7,6 +7,8 @@ module Camera
 
 import Type_Defs
 
+--------------------------------------------------------------------------------
+
 data Camera = Camera
     { distance    :: Scalar
     , inclination :: Scalar
@@ -14,6 +16,8 @@ data Camera = Camera
     , ylimits     :: (Scalar, Scalar)
     , xypixels    :: (Int, Int)
     }
+
+--------------------------------------------------------------------------------
 
 newtype Pixel = Pixel 
     { pixel_xy :: (Scalar, Scalar)
@@ -31,3 +35,5 @@ init_pixels camera =
         (xmin, xmax) = xlimits camera
         (ymin, ymax) = ylimits camera
         (nx, ny)     = xypixels camera
+
+--------------------------------------------------------------------------------
