@@ -2,10 +2,10 @@ module BH_Shadow
 ( calculate_shadow
 ) where
 
-import Config
-import Photon
+import Photon 
 import Camera
-import Type_Defs
+import Config (camera, k0_init)
+import Type_Defs (Scalar, Vec2)
 import Propagate_Photons (propagate_photons, photon_escaped, photon_captured)
 
 --------------------------------------------------------------------------------
