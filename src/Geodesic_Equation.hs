@@ -2,8 +2,8 @@ module Geodesic_Equation
 ( dkdl
 ) where
 
-import Type_Defs
 import Geometry (conn)
+import Type_Defs (Scalar, Vec1, Vec2)
 
 dot :: Vec1 -> Vec1 -> Scalar
 dot x y = sum $ zipWith (*) x y

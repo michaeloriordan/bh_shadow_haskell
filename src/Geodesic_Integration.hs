@@ -3,9 +3,9 @@ module Geodesic_Integration
 , stepsize
 ) where
 
-import Photon
 import Type_Defs
 import Data.List 
+import Photon (Photon(..))
 import Geodesic_Equation (dkdl)
 import Config (coords, integrator, rh, step_epsilon)
 
