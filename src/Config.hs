@@ -1,6 +1,5 @@
 module Config
 ( camera
-, k0_init
 , coords
 , spin
 , rh
@@ -13,8 +12,8 @@ module Config
 , chunk_size
 ) where
 
-import Camera (Camera(..), init_pixels)
 import Type_Defs (Coords(..), Integrator(..))
+import Camera (Camera(..), init_pixels, init_photons)
 
 --------------------------------------------------------------------------------
 
@@ -26,12 +25,13 @@ camera = Camera
     , ylimits     = (-10, 10)
     , xypixels    = (1024, 1024)
     , pixels      = init_pixels camera
+    , photons     = init_photons k0i camera
     }
 
 --------------------------------------------------------------------------------
 
 -- Initial k^0 component of photon momentum
-k0_init = 10.0
+k0i = 10.0
 
 --------------------------------------------------------------------------------
 

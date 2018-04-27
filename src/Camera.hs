@@ -18,6 +18,7 @@ data Camera = Camera
     , ylimits     :: (Scalar, Scalar)
     , xypixels    :: (Int, Int)
     , pixels      :: Pixels
+    , photons     :: Photons
     }
 
 --------------------------------------------------------------------------------

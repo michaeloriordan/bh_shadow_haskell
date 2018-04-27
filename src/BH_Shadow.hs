@@ -4,7 +4,7 @@ module BH_Shadow
 
 import Photon 
 import Camera
-import Config (camera, k0_init)
+import Config (camera)
 import Type_Defs (Scalar, Vec2)
 import Propagate_Photons (propagate_photons, photon_escaped, photon_captured)
 
@@ -12,7 +12,7 @@ import Propagate_Photons (propagate_photons, photon_escaped, photon_captured)
 
 calculate_shadow :: Camera -> Vec2
 calculate_shadow camera = results where
-    initial_photons = init_photons k0_init camera 
+    initial_photons = photons camera 
     final_photons   = propagate_photons initial_photons
     results         = data_to_save final_photons camera
 
