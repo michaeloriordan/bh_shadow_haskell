@@ -41,6 +41,7 @@ data Integrator = RK4 | VVerlet deriving (Eq)
 
 --------------------------------------------------------------------------------
 
+-- Schwarzschild, Gullstrand-Painleve, Boyer-Lindquist, Kerr-Schild
 data Coords = Schwarzschild | Schwarzschild_GP | Kerr_BL | Kerr_KS deriving (Eq)
 
 --------------------------------------------------------------------------------
