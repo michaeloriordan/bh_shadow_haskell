@@ -1,12 +1,11 @@
 module Propagate_Photons
 ( propagate_photons
-, photon_finished
-, photon_escaped
-, photon_captured
+, gather_results
 ) where
 
 import Config
 import Photon
+import Camera
 import Type_Defs
 import Geodesic_Integration (step_geodesic, stepsize)
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
@@ -18,6 +17,21 @@ propagate_photons = map' propagate_photon
 
 --------------------------------------------------------------------------------
 
+-- Save: "x y r th phi status" 
+-- Initial pixel: (x, y)
+-- Final position: (r, th, phi)
+-- Status: escaped, captured, or stuck
+gather_results :: Photons -> Camera -> Vec2
+gather_results phs camera = 
+    [ [x, y, r, th, phi, stat] 
+    | ((x,y), (r,th,phi), stat) <- zip3 xys positions status
+    ] where
+        positions = map photon_position phs
+        status    = map photon_status phs
+        xys       = map pixel_xy $ pixels camera
+
+--------------------------------------------------------------------------------
+
 photon_finished :: Photon -> Bool
 photon_finished ph = (photon_escaped ph) || (photon_captured ph)
 
@@ -26,6 +40,12 @@ photon_escaped ph = (photon_r ph) > rmax
 
 photon_captured :: Photon -> Bool
 photon_captured ph = (photon_r ph) <= rmin
+
+photon_status :: Photon -> Scalar
+photon_status ph
+    | photon_captured ph = 0
+    | photon_escaped ph  = 1
+    | otherwise          = -1
 
 --------------------------------------------------------------------------------
 
