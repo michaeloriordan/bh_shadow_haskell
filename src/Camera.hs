@@ -17,6 +17,7 @@ data Camera = Camera
     , xlimits     :: (Scalar, Scalar)
     , ylimits     :: (Scalar, Scalar)
     , xypixels    :: (Int, Int)
+    , pixels      :: Pixels
     }
 
 --------------------------------------------------------------------------------
@@ -61,7 +62,7 @@ init_photon k0 camera pixel = Photon xi ki where
     xi = [0.0, r, th, phi]
     ki = [k0, k1, k2, k3]
 
-init_photons :: Scalar -> Camera -> Pixels -> Photons
-init_photons k0 camera = map $ init_photon k0 camera
+init_photons :: Scalar -> Camera -> Photons
+init_photons k0 camera = map (init_photon k0 camera) $ pixels camera
 
 --------------------------------------------------------------------------------

@@ -12,10 +12,9 @@ import Propagate_Photons (propagate_photons, photon_escaped, photon_captured)
 
 calculate_shadow :: Camera -> Vec2
 calculate_shadow camera = results where
-    pixels          = init_pixels camera
-    initial_photons = init_photons k0_init camera pixels
+    initial_photons = init_photons k0_init camera 
     final_photons   = propagate_photons initial_photons
-    results         = data_to_save final_photons pixels
+    results         = data_to_save final_photons camera
 
 --------------------------------------------------------------------------------
 
@@ -29,13 +28,13 @@ photon_status ph
 -- Initial pixel: (x, y)
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
-data_to_save :: Photons -> Pixels -> Vec2
-data_to_save phs pixels = 
+data_to_save :: Photons -> Camera -> Vec2
+data_to_save phs camera = 
     [ [x, y, r, th, phi, stat] 
     | ((x,y), (r,th,phi), stat) <- zip3 xys positions status
     ] where
         positions = map photon_position phs
         status    = map photon_status phs
-        xys       = map pixel_xy pixels
+        xys       = map pixel_xy $ pixels camera
 
 --------------------------------------------------------------------------------
