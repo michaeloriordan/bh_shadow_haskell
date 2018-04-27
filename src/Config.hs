@@ -13,8 +13,8 @@ module Config
 , chunk_size
 ) where
 
-import Type_Defs
-import Camera
+import Camera (Camera(..), init_pixels)
+import Type_Defs (Coords(..), Integrator(..))
 
 --------------------------------------------------------------------------------
 
