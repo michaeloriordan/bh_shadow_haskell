@@ -3,8 +3,8 @@ module BH_Shadow
 ) where
 
 import Config (camera)
+import Type_Defs (Vec2)
 import Camera (Camera(..))
-import Type_Defs (Scalar, Vec2)
 import Propagate_Photons (propagate_photons, gather_results)
 
 --------------------------------------------------------------------------------
