@@ -1,5 +1,5 @@
 module Propagate_Photons
-( propagate_photons
+( propagate
 , gather_results
 ) where
 
@@ -12,8 +12,8 @@ import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
 
-propagate_photons :: Photons -> Photons
-propagate_photons = map' propagate_photon
+propagate :: Photons -> Photons
+propagate = map' propagate_photon
 
 --------------------------------------------------------------------------------
 

@@ -5,14 +5,14 @@ module BH_Shadow
 import Config (camera)
 import Type_Defs (Vec2)
 import Camera (Camera(..))
-import Propagate_Photons (propagate_photons, gather_results)
+import Propagate_Photons (propagate, gather_results)
 
 --------------------------------------------------------------------------------
 
 calculate_shadow :: Camera -> Vec2
 calculate_shadow camera = results where
     initial_photons = photons camera 
-    final_photons   = propagate_photons initial_photons
+    final_photons   = propagate initial_photons
     results         = gather_results final_photons camera
 
 --------------------------------------------------------------------------------
