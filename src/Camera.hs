@@ -6,8 +6,8 @@ module Camera
 , init_photons
 ) where
 
-import Type_Defs
 import Photon
+import Type_Defs (Scalar)
 
 --------------------------------------------------------------------------------
 
