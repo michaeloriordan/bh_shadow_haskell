@@ -39,7 +39,7 @@ stepsize'' x k = (x1 - rh) / (2 * abs k1)
 --------------------------------------------------------------------------------
 
 step_geodesic_rk4 :: Photon -> Photon
-step_geodesic_rk4 ph = phf where
+step_geodesic_rk4 ph = Photon xf kf where
     x = photon_x ph
     k = photon_k ph
     dl = stepsize x k
@@ -71,12 +71,10 @@ step_geodesic_rk4 ph = phf where
     xf = zipWith (+) x dx
     kf = zipWith (+) k dk
 
-    phf = Photon xf kf
-
 --------------------------------------------------------------------------------
 
 step_geodesic_vverlet :: Photon -> Photon
-step_geodesic_vverlet ph = phf where
+step_geodesic_vverlet ph = Photon xf kf where
     x = photon_x ph
     k = photon_k ph
     dl = stepsize x k
@@ -89,7 +87,5 @@ step_geodesic_vverlet ph = phf where
         where k1 = zipWith (\a b -> a + dl*b) k dk1 -- Estimate new k
 
     kf = zipWith3 (\a b c -> a + (dl/2)*(b + c)) k dk1 dk2 
-
-    phf = Photon xf kf
 
 --------------------------------------------------------------------------------
