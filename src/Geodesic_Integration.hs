@@ -24,19 +24,17 @@ stepsize x k = case coords of
     _             -> stepsize' x k
 
 stepsize' :: Vec1 -> Vec1 -> Scalar
-stepsize' x k = dl where
-    (_,x1, _, _) = components x
-    (_,k1,k2,k3) = components k
-    d1 = abs k1 / x1
-    d2 = abs k2
-    d3 = abs k3
-    dl = step_epsilon / (d1 + d2 + d3)
+stepsize' x k = step_epsilon / (d1 + d2 + d3)
+    where (_,x1, _, _) = components x
+          (_,k1,k2,k3) = components k
+          d1 = abs k1 / x1
+          d2 = abs k2
+          d3 = abs k3
 
 stepsize'' :: Vec1 -> Vec1 -> Scalar
-stepsize'' x k = dl where
-    (_,x1,_,_) = components x
-    (_,k1,_,_) = components k
-    dl = (x1 - rh) / (2 * abs k1)
+stepsize'' x k = (x1 - rh) / (2 * abs k1)
+    where (_,x1,_,_) = components x
+          (_,k1,_,_) = components k
 
 --------------------------------------------------------------------------------
 
