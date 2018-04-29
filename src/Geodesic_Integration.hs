@@ -23,8 +23,6 @@ stepsize x k = case coords of
     Kerr_BL       -> min (stepsize' x k) (stepsize'' x k)
     _             -> stepsize' x k
 
---------------------------------------------------------------------------------
-
 stepsize' :: Vec1 -> Vec1 -> Scalar
 stepsize' x k = dl where
     (_,x1, _, _) = components x
