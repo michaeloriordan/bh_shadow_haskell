@@ -1,6 +1,5 @@
 module Geodesic_Integration
 ( step_geodesic
-, stepsize
 ) where
 
 import Type_Defs
@@ -11,7 +10,7 @@ import Config (coords, integrator, rh, step_epsilon)
 
 --------------------------------------------------------------------------------
 
-step_geodesic :: Photon -> Scalar -> Photon
+step_geodesic :: Photon -> Photon
 step_geodesic = case integrator of
     RK4     -> step_geodesic_rk4
     VVerlet -> step_geodesic_vverlet
@@ -43,10 +42,11 @@ stepsize'' x k = dl where
 
 --------------------------------------------------------------------------------
 
-step_geodesic_rk4 :: Photon -> Scalar -> Photon
-step_geodesic_rk4 ph dl = phf where
+step_geodesic_rk4 :: Photon -> Photon
+step_geodesic_rk4 ph = phf where
     x = photon_x ph
     k = photon_k ph
+    dl = stepsize x k
 
     dx1 = k
     dk1 = dkdl x k
@@ -79,10 +79,11 @@ step_geodesic_rk4 ph dl = phf where
 
 --------------------------------------------------------------------------------
 
-step_geodesic_vverlet :: Photon -> Scalar -> Photon
-step_geodesic_vverlet ph dl = phf where
+step_geodesic_vverlet :: Photon -> Photon
+step_geodesic_vverlet ph = phf where
     x = photon_x ph
     k = photon_k ph
+    dl = stepsize x k
 
     dk1 = dkdl x k
 

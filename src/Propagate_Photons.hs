@@ -7,7 +7,7 @@ import Config
 import Photon
 import Camera
 import Type_Defs
-import Geodesic_Integration (step_geodesic, stepsize)
+import Geodesic_Integration (step_geodesic)
 import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
@@ -51,8 +51,7 @@ photon_status ph
 
 step_photon :: Photon -> Photon
 step_photon ph = phf where
-    dl = stepsize (photon_x ph) (photon_k ph)
-    phh = step_geodesic ph dl
+    phh = step_geodesic ph
     phf = bound_coords phh
 
 --------------------------------------------------------------------------------
