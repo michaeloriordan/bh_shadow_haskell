@@ -79,6 +79,7 @@ propagate_photon = propagate_photon' 0
 
 bound_coords :: Photon -> Photon
 bound_coords ph = case coords of
+    Schwarzschild    -> bound_coords' (photon_x ph) (photon_k ph)
     Schwarzschild_GP -> bound_coords' (photon_x ph) (photon_k ph)
     Kerr_BL          -> bound_coords' (photon_x ph) (photon_k ph)
     Kerr_KS          -> bound_coords' (photon_x ph) (photon_k ph)
