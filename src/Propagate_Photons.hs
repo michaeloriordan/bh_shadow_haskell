@@ -3,7 +3,7 @@ module Propagate_Photons
 , gather_results
 ) where
 
-import Config
+import Config 
 import Photon
 import Camera
 import Type_Defs

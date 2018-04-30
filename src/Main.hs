@@ -1,4 +1,3 @@
-import System.IO
 import Config (camera)
 import BH_Shadow (calculate_shadow)
 import Type_Defs (vec2_to_string, Vec2)
