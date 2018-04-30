@@ -12,7 +12,7 @@ module Config
 , chunk_size
 ) where
 
-import Type_Defs (Coords(..), Integrator(..))
+import Type_Defs (Scalar, Coords(..), Integrator(..))
 import Camera (Camera(..), init_pixels, init_photons)
 
 --------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ camera = Camera
 --------------------------------------------------------------------------------
 
 -- Initial k^0 component of photon momentum
-k0i = 10.0 :: Double
+k0i = 10.0 :: Scalar
 
 --------------------------------------------------------------------------------
 
@@ -41,19 +41,19 @@ coords = Kerr_KS :: Coords
 --------------------------------------------------------------------------------
 
 -- Black hole spin
-spin = 0.9 :: Double
-rh = 1 + sqrt (1 - spin^2) :: Double
+spin = 0.9 :: Scalar
+rh = 1 + sqrt (1 - spin^2) :: Scalar
 
 --------------------------------------------------------------------------------
 
 -- Radius beyond which photon has escaped
-rmax = distance camera + 10 :: Double
+rmax = distance camera + 10 :: Scalar
 
 -- Stop slightly outside horizon in Schwarzschild or Boyer-Lindquist coords
 rmin = case coords of 
-    Schwarzschild -> rh + 1.0e-6 :: Double
-    Kerr_BL       -> rh + 1.0e-6 :: Double
-    _             -> rh          :: Double
+    Schwarzschild -> rh + 1.0e-6 :: Scalar
+    Kerr_BL       -> rh + 1.0e-6 :: Scalar
+    _             -> rh          :: Scalar
 
 --------------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ rmin = case coords of
 integrator = VVerlet :: Integrator
 
 -- Stepsize parameter
-step_epsilon = 0.01 :: Double
+step_epsilon = 0.01 :: Scalar
 
 -- Max number of steps before photon considered stuck
 nmax = 100000 :: Int
