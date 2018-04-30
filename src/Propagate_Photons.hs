@@ -22,13 +22,13 @@ propagate = map' propagate_photon
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
 gather_results :: Photons -> Camera -> Vec2
-gather_results phs camera = 
+gather_results phs cam = 
     [ [x, y, r, th, phi, stat] 
     | ((x,y), (r,th,phi), stat) <- zip3 xys positions status
     ] where
         positions = map photon_position phs
         status    = map photon_status phs
-        xys       = map pixel_xy $ pixels camera
+        xys       = map pixel_xy $ pixels cam
 
 --------------------------------------------------------------------------------
 
