@@ -3,17 +3,17 @@ module Propagate_Photons
 , gather_results
 ) where
 
-import Config 
 import Photon
 import Camera
 import Type_Defs
+import Pmap (pmap)
+import Config (rmin, rmax, coords, nmax)
 import Geodesic_Integration (step_geodesic)
-import Control.Parallel.Strategies (withStrategy,parListChunk,rseq)
 
 --------------------------------------------------------------------------------
 
 propagate :: Photons -> Photons
-propagate = map' propagate_photon
+propagate = pmap propagate_photon
 
 --------------------------------------------------------------------------------
 
@@ -22,13 +22,13 @@ propagate = map' propagate_photon
 -- Final position: (r, th, phi)
 -- Status: escaped, captured, or stuck
 gather_results :: Photons -> Camera -> Vec2
-gather_results phs cam = 
+gather_results phs camera = 
     [ [x, y, r, th, phi, stat] 
     | ((x,y), (r,th,phi), stat) <- zip3 xys positions status
     ] where
         positions = map photon_position phs
         status    = map photon_status phs
-        xys       = map pixel_xy $ pixels cam
+        xys       = map pixel_xy $ pixels camera
 
 --------------------------------------------------------------------------------
 
@@ -53,17 +53,6 @@ step_photon :: Photon -> Photon
 step_photon ph = phf where
     phh = step_geodesic ph
     phf = bound_coords phh
-
---------------------------------------------------------------------------------
-
-parmap :: (a -> b) -> [a] -> [b]
-parmap = parmap' chunk_size
-
-parmap' :: Int -> (a -> b) -> [a] -> [b]
-parmap' chunk f = withStrategy (parListChunk chunk rseq) . map f
-
-map' :: (a -> b) -> [a] -> [b]
-map' = if do_parallel then parmap else map
 
 --------------------------------------------------------------------------------
 
