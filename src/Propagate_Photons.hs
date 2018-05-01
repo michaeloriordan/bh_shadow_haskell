@@ -3,10 +3,10 @@ module Propagate_Photons
 , gather_results
 ) where
 
+import Pmap
 import Photon
 import Camera
 import Type_Defs
-import Pmap (pmap)
 import Config (rmin, rmax, coords, nmax)
 import Geodesic_Integration (step_geodesic)
 
